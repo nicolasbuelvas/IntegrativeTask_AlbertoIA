@@ -12,6 +12,10 @@ from src.extraction.regex_patterns import (
     PORTFOLIO_PATTERN,
     SECTION_HEADER_PATTERN,
 )
+from src.extraction.skill_extractor import (
+    SKILL_PATTERNS,
+    SkillExtractor,
+)
 
 __all__ = [
     "ContactExtractor",
@@ -25,4 +29,6 @@ __all__ = [
     "PHONE_PATTERN",
     "PORTFOLIO_PATTERN",
     "SECTION_HEADER_PATTERN",
+    "SKILL_PATTERNS",
+    "SkillExtractor",
 ]
