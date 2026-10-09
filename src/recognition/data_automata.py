@@ -33,5 +33,23 @@ class DataAutomata:
         return dfa
 
     def _build_data_dfa(self) -> DeterministicFiniteAutomaton:
-        # Estructura enfocada en procesamiento masivo (PYTHON -> SPARK -> SQL -> AIRFLOW)
-        ...
+        """Builds a DFA to recognize data engineering/science keywords."""
+        dfa = DeterministicFiniteAutomaton()
+        s0 = State("s0")
+        s1 = State("s1")
+
+        dfa.add_start_state(s0)
+        dfa.add_final_state(s1)
+
+        data_keywords = ["DATA", "SQL", "PYTHON", "ETL", "PANDAS", "SPARK", "POWERBI"]
+
+        for keyword in data_keywords:
+            dfa.add_transition(s0, Symbol(keyword), s1)
+            dfa.add_transition(s1, Symbol(keyword), s1)
+
+        return dfa
+
+    def accepts_token(self, token: str) -> bool:
+        """Checks if a given token is accepted by the Data DFA."""
+        symbols = [Symbol(w) for w in token.upper().split()]
+        return self.data_dfa.accepts(symbols)
