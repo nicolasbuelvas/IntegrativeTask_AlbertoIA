@@ -3,6 +3,7 @@ import pytest
 ## Para ejecutar los tests, abre la terminal y navega a la carpeta del proyecto. Luego, ejecuta el siguiente comando:
 ## cd "c:/Users/Danna/OneDrive/Escritorio/Semestre_6/Discretas III/semana 10/Integradora/IntegrativeTask_AlbertoIA"
 ## py -3.13 -m pytest tests/test_recognition.py -q
+
 from src.recognition.data_automata import DataAutomata
 
 
