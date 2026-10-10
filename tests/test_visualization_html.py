@@ -144,3 +144,40 @@ def test_render_html_rejects_model_without_expected_structure() -> None:
     # Act / Assert
     with pytest.raises(ReportRenderError):
         render_html(invalid_model)
+
+
+def test_render_html_inlines_default_css() -> None:
+    # Arrange
+    model = _validated_model()
+
+    # Act
+    html = render_html(model)
+
+    # Assert
+    assert "<style>" in html
+    assert "--color-heading" in html
+
+
+def test_render_html_omits_default_css_when_disabled() -> None:
+    # Arrange
+    model = _validated_model()
+
+    # Act
+    html = render_html(model, include_default_css=False)
+
+    # Assert
+    assert "<style>" not in html
+    assert "--color-heading" not in html
+
+
+def test_render_html_prefers_explicit_inline_css() -> None:
+    # Arrange
+    model = _validated_model()
+    custom_css = "body { color: navy; }"
+
+    # Act
+    html = render_html(model, inline_css=custom_css)
+
+    # Assert
+    assert custom_css in html
+    assert "--color-heading" not in html
