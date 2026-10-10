@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Currículum de {{ view.name }}</title>
+    {% if inline_css %}<style>{{ inline_css }}</style>{% endif %}
+</head>
+<body>
+    <header>
+        <h1>{{ view.name }}</h1>
+        <p>{{ view.title }}</p>
+    </header>
+    <main>
+        <section aria-labelledby="personal-heading">
+            <h2 id="personal-heading">Datos personales</h2>
+            <p><strong>Nombre:</strong> {{ view.name }}</p>
+            <p><strong>Perfil profesional:</strong> {{ view.title }}</p>
+        </section>
+        <section aria-labelledby="contact-heading">
+            <h2 id="contact-heading">Contacto</h2>
+            <ul>
+                <li><strong>Email:</strong> {{ view.contact.email }}</li>
+                <li><strong>Teléfono:</strong> {{ view.contact.phone or "No disponible" }}</li>
+                <li><strong>GitHub:</strong>
+                    {% if view.contact.github_url %}<a href="{{ view.contact.github_url }}" rel="noopener noreferrer">{{ view.contact.github }}</a>{% elif view.contact.github %}{{ view.contact.github }}{% else %}No disponible{% endif %}
+                </li>
+                <li><strong>LinkedIn:</strong>
+                    {% if view.contact.linkedin_url %}<a href="{{ view.contact.linkedin_url }}" rel="noopener noreferrer">{{ view.contact.linkedin }}</a>{% elif view.contact.linkedin %}{{ view.contact.linkedin }}{% else %}No disponible{% endif %}
+                </li>
+            </ul>
+        </section>
+        <section aria-labelledby="experience-heading">
+            <h2 id="experience-heading">Experiencia</h2>
+            {% if view.experiences %}
+            <ul>
+                {% for experience in view.experiences %}
+                <li>{{ experience.position }} en {{ experience.company }} ({{ experience.years }} años)</li>
+                {% endfor %}
+            </ul>
+            {% else %}<p>No disponible</p>{% endif %}
+        </section>
+        <section aria-labelledby="skills-heading">
+            <h2 id="skills-heading">Habilidades</h2>
+            {% if view.skills %}
+            <ul>{% for skill in view.skills %}<li>{{ skill.name }}</li>{% endfor %}</ul>
+            {% else %}<p>No disponible</p>{% endif %}
+        </section>
+        <section aria-labelledby="classification-heading">
+            <h2 id="classification-heading">Clasificación de perfiles</h2>
+            {% if view.profile_results %}
+            <ul>
+                {% for result in view.profile_results %}
+                <li>{{ result.profile }}: {% if result.accepted %}Aceptado{% else %}Rechazado{% endif %}</li>
+                {% endfor %}
+            </ul>
+            {% else %}<p>No disponible</p>{% endif %}
+        </section>
+    </main>
+</body>
+</html>
