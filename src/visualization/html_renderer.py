@@ -7,17 +7,26 @@ from src.visualization.view_model import ReportModelStructureError, ReportView, 
 
 _TEMPLATE_DIRECTORY = Path(__file__).parent / "templates"
 _TEMPLATE_NAME = "report.html"
+_STYLE_PATH = _TEMPLATE_DIRECTORY / "style.css"
 
 
 class ReportRenderError(ValueError):
     """Raised when a resume model cannot be rendered as an HTML report."""
 
 
-def render_html(model: object, *, inline_css: str | None = None) -> str:
+def render_html(
+    model: object,
+    *,
+    inline_css: str | None = None,
+    include_default_css: bool = True,
+) -> str:
     """Validate and render a textX resume model to an HTML document."""
     try:
         view = build_report_view(model)
-        return _render_view(view, inline_css)
+        css = inline_css
+        if css is None and include_default_css:
+            css = _STYLE_PATH.read_text(encoding="utf-8")
+        return _render_view(view, css)
     except ReportRenderError:
         raise
     except (ReportModelStructureError, TemplateError, OSError, TypeError) as exc:
