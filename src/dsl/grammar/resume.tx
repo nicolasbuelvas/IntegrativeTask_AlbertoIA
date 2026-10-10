@@ -1,0 +1,38 @@
+/*
+  Gramática DSL para ResumeLens (textX / EBNF)
+  Archivo: src/dsl/grammar/resume.tx
+*/
+
+ResumeModel:
+    'CANDIDATE_PROFILE' name=STRING
+    'TITLE:' title=STRING
+    contact=ContactInfo
+    'EXPERIENCE:' experiences*=Experience
+    'EDUCATION:' education*=Education
+    'SKILLS:' skills+=STRING[',']
+    'EVALUATIONS:' evaluations+=ProfileEvaluation
+;
+
+ContactInfo:
+    'CONTACT'
+    'email=' email=STRING
+    ('phone=' phone=STRING)?
+    ('github=' github=STRING)?
+    ('linkedin=' linkedin=STRING)?
+;
+
+Experience:
+    '-' position=STRING 'at' company=STRING '(' years=INT 'years)'
+;
+
+Education:
+    '-' degree=STRING 'from' institution=STRING
+;
+
+ProfileEvaluation:
+    profile=STRING ':' status=StatusType
+;
+
+StatusType:
+    'ACCEPTED' | 'REJECTED'
+;
