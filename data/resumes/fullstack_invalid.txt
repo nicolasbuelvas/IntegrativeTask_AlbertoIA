@@ -1,0 +1,40 @@
+Mateo Rios
+Backend Application Engineer
+mateo.rios@example.com
+Phone: +57 300 555 0142
+LinkedIn: https://linkedin.com/in/mateo-rios-demo
+GitHub: https://github.com/mateo-rios-demo
+Portfolio: https://mateo-rios.example.com
+
+PROFESSIONAL SUMMARY
+Backend engineer with 5 years of experience supporting customer-facing products.
+Comfortable collaborating with interface teams and maintaining a few React.js views.
+Known for steady delivery, clear handoffs, and careful incident follow-up.
+
+TECHNICAL SKILLS
+PostgreSQL | React.js | Git | Node.js | ReactJS | Postgres | GIT | Node
+
+EXPERIENCE
+Backend Engineer, Juniper Harbor
+2021 - Present
+Maintained account services and helped coordinate feature releases.
+Worked with designers to keep a small set of React screens aligned with product needs.
+Prepared operational notes and reviewed recurring customer support issues.
+
+Software Developer, Blue Mesa Labs
+2019 - 2021
+Contributed to internal service improvements for a regional delivery company.
+Partnered with quality staff to reproduce reported issues and document resolutions.
+Helped plan incremental releases with the product team.
+
+EDUCATION
+Bachelor of Information Systems, Universidad Autónoma de Occidente
+Graduated 2019
+
+LANGUAGES
+Spanish - Native
+English - Working proficiency
+
+INTERESTS
+Cycling, cooking with friends, and volunteering at a neighborhood library.
+Enjoys reading biographies and exploring local walking trails.

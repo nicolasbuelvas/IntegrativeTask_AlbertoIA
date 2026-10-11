@@ -1,0 +1,40 @@
+Lina Marquez
+Full Stack Engineer
+lina.marquez@example.com
+Phone: +57 300 555 0141
+LinkedIn: https://linkedin.com/in/lina-marquez-demo
+GitHub: https://github.com/lina-marquez-demo
+Portfolio: https://lina-marquez.example.com
+
+PROFESSIONAL SUMMARY
+Product-minded engineer with 6 years of experience delivering web products for small teams.
+Experienced in taking features from early planning through release and ongoing support.
+Enjoys collaborating with design, operations, and customer support colleagues.
+
+TECHNICAL SKILLS
+Postgres | React.js | Git | Javascript | Node | ReactJS | PostgreSQL | JS | Node.js
+
+EXPERIENCE
+Senior Full Stack Engineer, Northstar Studio
+2022 - Present
+Delivered customer account and reporting features for a subscription service.
+Coordinated releases with a distributed product group and documented support procedures.
+Reduced slow page responses by reviewing common user workflows.
+
+Software Engineer, Cedarline Works
+2019 - 2022
+Built internal tools used by a small logistics team.
+Worked with product partners to clarify requirements and prioritize maintenance.
+Helped onboard new colleagues and reviewed project documentation.
+
+EDUCATION
+Bachelor of Software Engineering, Universidad del Valle
+Graduated 2019
+
+LANGUAGES
+Spanish - Native
+English - Professional working proficiency
+
+INTERESTS
+Hiking, analog photography, and neighborhood cooking events.
+Volunteers with a community library on weekends.
