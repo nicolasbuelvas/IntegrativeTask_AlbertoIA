@@ -1,0 +1,40 @@
+Sara Beltran
+Backend Developer
+sara.beltran@example.com
+Phone: +57 300 555 0143
+LinkedIn: https://linkedin.com/in/sara-beltran-sample
+GitHub: https://github.com/sara-beltran-sample
+Portfolio: https://sara-beltran.example.com
+
+PROFESSIONAL SUMMARY
+Backend developer with 4 years of experience building dependable business services.
+Enjoys improving reliability, clarifying requirements, and sharing practical documentation.
+Works closely with support and product teams during planning and release reviews.
+
+TECHNICAL SKILLS
+Git | PostgreSQL | Python3 | postgres | GIT | Python
+
+EXPERIENCE
+Backend Developer, Silver Fern Services
+2022 - Present
+Maintains account and inventory services for a growing local business.
+Reviews data access patterns and helps investigate production incidents.
+Coordinates changes with colleagues across product and customer support.
+
+Software Developer, Willow Creek Group
+2020 - 2022
+Implemented internal workflow improvements for operations staff.
+Prepared release notes and helped prioritize reported issues.
+Contributed to onboarding guides for new team members.
+
+EDUCATION
+Bachelor of Computer Science, Universidad de Caldas
+Graduated 2020
+
+LANGUAGES
+Spanish - Native
+English - Professional working proficiency
+
+INTERESTS
+Trail running, independent cinema, and community gardening.
+Enjoys cooking traditional recipes with family and friends.
