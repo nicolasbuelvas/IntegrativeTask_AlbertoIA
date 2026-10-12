@@ -1,0 +1,40 @@
+Celeste Arboleda
+Machine Learning Engineer
+celeste.arboleda@example.com
+Phone: +57 300 555 0241
+LinkedIn: https://linkedin.com/in/celeste-arboleda-lab
+GitHub: https://github.com/celeste-arboleda-lab
+Portfolio: https://celeste-arboleda.example.com
+
+PROFILE
+Machine Learning Engineer with 4 years of experience supporting product research.
+Focuses on supervised learning, careful experimentation, and reproducible delivery.
+Translates product goals into measurable evaluation plans for small teams.
+
+CORE COMPETENCIES
+Git | SQL | tensorflow | pandas | Python3 | Python | Pandas | SQL | git
+
+EXPERIENCE
+Machine Learning Engineer, Lumen Orchard Research
+2022 - Present
+Built ranking experiments for a fictional online learning service.
+Worked with analysts to review evaluation results and document limitations.
+Presented findings to product partners in clear, nontechnical language.
+
+Research Associate, Amethyst Grove Labs
+2020 - 2022
+Prepared repeatable experiments for a small applied research group.
+Maintained run notes and helped colleagues compare candidate approaches.
+Collaborated with subject matter experts to define useful success measures.
+
+EDUCATION
+Master of Applied Mathematics, Universidad del Quindío
+Graduated 2020
+
+LANGUAGES
+Spanish - Native
+English - Professional working proficiency
+
+INTERESTS
+Birdwatching, watercolor painting, and science outreach for local students.
+Enjoys long-distance walks and collecting used cookbooks.

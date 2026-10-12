@@ -1,0 +1,31 @@
+Dario Pineda
+Applied ML Engineer
+dario.pineda@example.com
+Phone: +57 300 555 0242
+LinkedIn: https://linkedin.com/in/dario-pineda-research
+GitHub: https://github.com/dario-pineda-research
+
+I have 3 years of experience developing evaluation workflows for product teams.
+My recent work focuses on model review, experiment tracking, and clear reporting.
+I partner with domain specialists to turn open questions into measurable studies.
+
+My current toolkit includes Python3, SQL, Git, sklearn, scikit-learn, scikit learn,
+PyTorch, TensorFlow, postgres, PostgreSQL, Airflow, and Apache Airflow.
+I document assumptions, compare results, and share concise handover notes.
+
+Machine Learning Engineer, Cobalt Compass Research
+2023 - Present
+Reviewed prediction quality for a fictional customer support platform.
+Prepared evaluation summaries and coordinated review sessions with product staff.
+Helped maintain a small library of repeatable research procedures.
+
+Research Programmer, Saffron Kite Analytics
+2021 - 2023
+Supported experiments for a regional education nonprofit.
+Worked with researchers to clarify study questions and explain limitations.
+Organized project records and prepared short presentations for stakeholders.
+
+Education: Bachelor of Statistics, Universidad de Nariño, 2021.
+Languages: Spanish (native), English (professional working proficiency).
+Outside work I enjoy cycling, sketching city buildings, and visiting museums.
+I volunteer at an after-school reading club twice each month.

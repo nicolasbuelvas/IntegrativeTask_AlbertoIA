@@ -1,0 +1,30 @@
+Rafaela Quintero
+Data Platform Engineer
+rafaela.quintero@example.com
+Phone: +57 300 555 0243
+LinkedIn: https://linkedin.com/in/rafaela-quintero-data
+GitHub: https://github.com/rafaela-quintero-data
+
+Over 6 years of experience building dependable information workflows for small teams.
+I enjoy tracing a request from its source through review and delivery.
+My recent work supports a fictional cooperative that coordinates regional food orders.
+
+Recent tooling includes SQL, Apache Spark, Python3, pytorch, and Pandas.
+I keep concise runbooks and favor clear ownership during handoffs.
+
+At Marble Kite Logistics, I helped consolidate daily reporting for operations staff.
+I clarified input expectations with partner teams and documented field definitions.
+Together, we reduced repeated manual checks during the weekly reporting cycle.
+
+Before that, I supported a research office serving several university departments.
+I prepared scheduled information feeds and helped investigate late deliveries.
+I also coordinated review sessions with the people who used the reports.
+
+Education: BSc in Information Management, Universidad de Córdoba, 2018.
+Short course: Practical Data Systems, fictional continuing education program, 2021.
+
+I speak Spanish natively and use English in professional settings.
+I have presented project updates to both technical and nontechnical audiences.
+
+Away from work, I enjoy bird photography, coastal walks, and community gardening.
+I occasionally help organize a neighborhood book exchange.
