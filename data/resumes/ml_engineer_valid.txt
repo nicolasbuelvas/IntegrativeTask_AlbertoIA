@@ -1,0 +1,42 @@
+Celeste Arboleda
+Machine Learning Engineer
+celeste.arboleda@example.com
+Phone: +57 300 555 0241
+LinkedIn: https://linkedin.com/in/celeste-arboleda-lab
+GitHub: https://github.com/celeste-arboleda-lab
+Portfolio: https://celeste-arboleda.example.com
+
+PROFILE
+Applied machine learning engineer focused on reproducible experiments and useful decision tools.
+Enjoys translating research questions into maintainable software for small product teams.
+Has 4 years of experience supporting analytics and model delivery.
+
+TECHNICAL SKILLS
+Git | SQL | tensorflow | pandas | Python3 | Python | Pandas | SQL | git
+
+EXPERIENCE
+Machine Learning Engineer, Lumen Orchard Analytics
+2023 - Present
+Prepared clean model inputs for forecasting work with operations colleagues.
+Compared baseline approaches and documented the tradeoffs in plain language.
+Added repeatable checks for data quality before scheduled model runs.
+
+Data Analyst, Mossbridge Research Cooperative
+2021 - 2023
+Reviewed weekly datasets and summarized patterns for non-technical partners.
+Maintained experiment notes and shared reproducible analysis steps.
+Helped colleagues understand confidence limits in internal reports.
+
+EDUCATION
+Master of Applied Statistics, Universidad del Cauca
+Completed 2021
+Bachelor of Mathematics, Universidad del Quindio
+Completed 2019
+
+LANGUAGES
+Spanish - Native
+English - Professional working proficiency
+
+INTERESTS
+Enjoys birdwatching, sketching city parks, and reading science history.
+Volunteers at a weekend community coding club.
