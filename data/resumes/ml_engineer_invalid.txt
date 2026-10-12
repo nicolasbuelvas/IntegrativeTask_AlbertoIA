@@ -1,0 +1,39 @@
+Dario Pineda
+Machine Learning Engineer
+dario.pineda@example.com
+Phone: +57 300 555 0242
+https://linkedin.com/in/dario-pineda-lab
+https://github.com/dario-pineda-lab
+
+Over four years of experience, Dario Pineda has worked with product and research groups
+to turn experimental questions into reliable internal tools. His work includes writing
+data preparation jobs, comparing model results, and communicating limitations to teams.
+He prefers careful baselines and readable notes over unexplained performance claims.
+
+In his current role at Juniper Vale Insights, he maintains recurring evaluation jobs
+and helps investigate unexpected changes in incoming records. Before that, at Amberline
+Metrics Studio, he supported analysts with reusable scripts and scheduled reports.
+Both teams worked with small datasets from fictional demonstration projects.
+
+His technical toolkit includes Python3, sklearn, scikit-learn, PyTorch, pytorch,
+TensorFlow, tensorflow,
+Postgres, PostgreSQL, SQL, and Git. He has used Airflow and Apache Airflow for scheduling
+and has written short guides for colleagues who review analytical results.
+
+RECENT WORK
+Built a repeatable evaluation report for a simulated delivery-time dataset.
+Compared two classification baselines and described where each one failed.
+Added input checks so missing values were visible before a scheduled run.
+Shared concise findings with product and operations colleagues each month.
+
+EDUCATION
+Bachelor of Computer Science, Universidad del Magdalena
+Graduated 2020
+Postgraduate certificate in applied analytics, Instituto Ficticio del Pacifico
+Completed 2022
+
+LANGUAGES AND COMMUNITY
+Spanish - Native
+English - Professional working proficiency
+Enjoys trail walks, board games, and helping organize a neighborhood book exchange.
+Occasionally mentors students during introductory programming workshops.

@@ -1,0 +1,38 @@
+Rafaela Quintero
+Data Platform Engineer
+rafaela.quintero@example.com
+Phone: +57 300 555 0243
+Contact profiles: linkedin.com/in/rafaela-quintero-data and github.com/rafaela-quintero-data
+
+Rafaela has 5 years of experience helping small teams move dependable information
+from operational systems into analytical workspaces. At Bluejay Canopy Labs, she
+collaborates with analysts to define useful refresh schedules and data quality checks.
+Her earlier role at Redwood Current Cooperative involved supporting internal reporting
+for a fictional regional food distributor.
+
+The work is practical and collaborative: clarify what a report needs, trace its source,
+and make the steps repeatable for the next person. She writes handover notes and checks
+that scheduled jobs produce understandable results when upstream data changes.
+
+TOOLS AND METHODS
+SQL | Apache Spark | Python3 | Spark | sql
+
+SELECTED PROJECTS
+Created a daily aggregation flow for sample inventory and shipment events.
+Worked with analysts to define consistent measures for a demonstration dashboard.
+Added checks that flagged incomplete source files before downstream refreshes.
+Documented ownership and recovery steps for routine scheduled work.
+
+EDUCATION
+Bachelor of Information Systems, Universidad de Nariño
+Graduated 2020
+Certificate in cloud data fundamentals, Centro Académico Imaginario
+Completed 2022
+
+LANGUAGES
+Spanish - Native
+English - Professional working proficiency
+
+PERSONAL
+Enjoys cycling along quiet roads, growing herbs, and visiting public libraries.
+Helps coordinate an occasional community workshop on digital literacy.
