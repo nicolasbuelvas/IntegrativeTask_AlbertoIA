@@ -20,31 +20,26 @@ class SoftwareAutomata:
         databases = ["POSTGRESQL", "MYSQL", "MONGODB", "ORACLE", "REDIS", "SQL", "DYNAMODB", "MARIADB", "CASSANDRA"]
         tools = ["GIT", "DOCKER", "KUBERNETES", "REST", "API", "GRAPHQL", "POSTMAN", "LINUX", "AWS"]
 
-        # Nivel 1: Rol / Lenguaje Backend
         for r in roles_and_langs:
             transitions.extend([
                 ("q0_start", r, "q1_be_tech"),
                 ("q1_be_tech", r, "q1_be_tech")
             ])
 
-        # Nivel 2: Frameworks Backend
         for be in backend_tech:
             transitions.extend([
                 ("q0_start", be, "q1_be_tech"),
                 ("q1_be_tech", be, "q1_be_tech")
             ])
 
-        # Nivel 3: Base de Datos
         for db in databases:
             transitions.extend([
                 ("q1_be_tech", db, "q2_db"),
                 ("q2_db", db, "q2_db")
             ])
 
-        # Nivel 4: Herramientas
         for t in tools:
             transitions.extend([
-                ("q1_be_tech", t, "q3_tools"),
                 ("q2_db", t, "q3_tools"),
                 ("q3_tools", t, "q3_tools")
             ])
@@ -52,7 +47,7 @@ class SoftwareAutomata:
         return builder.build_automaton(
             start_state="q0_start",
             transitions=transitions,
-            final_states=["q1_be_tech", "q2_db", "q3_tools"]
+            final_states=["q3_tools"]
         )
 
     def _build_fullstack_dfa(self):
