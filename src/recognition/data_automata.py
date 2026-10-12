@@ -1,55 +1,130 @@
-from pyformlang.finite_automaton import DeterministicFiniteAutomaton, State, Symbol
+from src.recognition.automata_builder import ProfileAutomatonBuilder
+from pyformlang.finite_automaton import Symbol
 
 class DataAutomata:
-    """Contiene los autómatas de reconocimiento para perfiles de Data y AI."""
-
     def __init__(self):
         self.ml_dfa = self._build_ml_dfa()
         self.data_dfa = self._build_data_dfa()
 
-    def _build_ml_dfa(self) -> DeterministicFiniteAutomaton:
-        dfa = DeterministicFiniteAutomaton()
-        
-        # Estado inicial q0
-        dfa.add_start_state(State("q0"))
-        
-        # Transiciones de ML: Lenguaje -> Librería -> Framework -> DB -> Git
-        dfa.add_transition(State("q0"), Symbol("PYTHON"), State("q1"))
-        
-        # Opciones en q1: PANDAS o NUMPY
-        dfa.add_transition(State("q1"), Symbol("PANDAS"), State("q2"))
-        dfa.add_transition(State("q1"), Symbol("NUMPY"), State("q2"))
-        
-        # Opciones en q2: SCIKIT_LEARN o TENSORFLOW
-        dfa.add_transition(State("q2"), Symbol("SCIKIT_LEARN"), State("q3"))
-        dfa.add_transition(State("q2"), Symbol("TENSORFLOW"), State("q3"))
-        
-        # Persistencia y Control de versiones
-        dfa.add_transition(State("q3"), Symbol("SQL"), State("q4"))
-        dfa.add_transition(State("q4"), Symbol("GIT"), State("q5"))
-        
-        # Estado final
-        dfa.add_final_state(State("q5"))
-        return dfa
+    def _build_ml_dfa(self):
+        """
+        Construye el autómata de Machine Learning según la especificación del proyecto:
+        q0 --(ROL/LANG)--> q1 --(PANDAS/NUMPY)--> q2 --(FRAMEWORK_ML)--> q3 --(DB)--> q4 --(GIT)--> q5 (FINAL)
+        """
+        builder = ProfileAutomatonBuilder()
+        transitions = []
 
-    def _build_data_dfa(self) -> DeterministicFiniteAutomaton:
-        """Builds a DFA to recognize data engineering/science keywords."""
-        dfa = DeterministicFiniteAutomaton()
-        s0 = State("s0")
-        s1 = State("s1")
+        ml_roles_and_langs = [
+            "MACHINE_LEARNING", "ML", "DATA_SCIENTIST", "MACHINE_LEARNING_ENGINEER", "AI_ENGINEER", "ML_ENGINEER",
+            "PYTHON", "R", "JULIA"
+        ]
+        data_prep = ["PANDAS", "NUMPY"]
+        ml_frameworks = ["SCIKIT_LEARN", "TENSORFLOW", "PYTORCH", "KERAS", "XGBOOST", "LIGHTGBM"]
+        databases = ["SQL", "POSTGRESQL", "MYSQL", "MONGODB"]
+        tools = ["GIT", "DOCKER", "KUBERNETES", "AWS", "GCP", "AZURE"]
 
-        dfa.add_start_state(s0)
-        dfa.add_final_state(s1)
+        # q0 -> q1 (Rol o Lenguaje Core)
+        for r in ml_roles_and_langs:
+            transitions.extend([
+                ("q0_start", r, "q1_lang"),
+                ("q1_lang", r, "q1_lang")
+            ])
 
-        data_keywords = ["DATA", "SQL", "PYTHON", "ETL", "PANDAS", "SPARK", "POWERBI"]
+        # q1 -> q2 (Data prep: Pandas / NumPy)
+        for dp in data_prep:
+            transitions.extend([
+                ("q1_lang", dp, "q2_prep"),
+                ("q2_prep", dp, "q2_prep")
+            ])
 
-        for keyword in data_keywords:
-            dfa.add_transition(s0, Symbol(keyword), s1)
-            dfa.add_transition(s1, Symbol(keyword), s1)
+        # q2 -> q3 (ML Framework)
+        for fw in ml_frameworks:
+            transitions.extend([
+                ("q2_prep", fw, "q3_framework"),
+                ("q3_framework", fw, "q3_framework")
+            ])
 
-        return dfa
+        # q3 -> q4 (Database)
+        for db in databases:
+            transitions.extend([
+                ("q3_framework", db, "q4_db"),
+                ("q4_db", db, "q4_db")
+            ])
 
-    def accepts_token(self, token: str) -> bool:
-        """Checks if a given token is accepted by the Data DFA."""
+        # q4 -> q5_final (Git / Tools)
+        for t in tools:
+            transitions.extend([
+                ("q4_db", t, "q5_final"),
+                ("q5_final", t, "q5_final")
+            ])
+
+        return builder.build_automaton(
+            start_state="q0_start",
+            transitions=transitions,
+            final_states=["q5_final"]
+        )
+
+    def _build_data_dfa(self):
+        """
+        Construye el autómata de Data Engineer / Data Platform Engineer:
+        q0 --(ROL)--> q1_role --(CORE_LANG)--> q2_core --(PROCESSING/PANDAS/SPARK)--> q3_proc --(STORAGE/SQL/BI)--> q4_final (FINAL)
+        """
+        builder = ProfileAutomatonBuilder()
+        transitions = []
+
+        de_roles = ["DATA", "DATA_ENGINEER", "DATA_ANALYST", "DATA_PLATFORM_ENGINEER", "DATA_ARCHITECT", "PLATFORM"]
+        core_lang = ["PYTHON", "SQL", "SCALA", "JAVA", "R"]
+        processing = ["ETL", "SPARK", "AIRFLOW", "HADOOP", "DATABRICKS", "PANDAS", "KAFKA", "FLINK", "DBT"]
+        storage_tools = [
+            "SQL", "POSTGRESQL", "MYSQL", "MARIADB", "SNOWFLAKE", "BIGQUERY", "REDSHIFT",
+            "POWERBI", "TABLEAU", "GIT", "DOCKER", "AWS", "GCP", "AZURE"
+        ]
+
+        # Nivel 1: Rol
+        for r in de_roles:
+            transitions.extend([
+                ("q0_start", r, "q1_role"),
+                ("q1_role", r, "q1_role")
+            ])
+
+        # Nivel 2: Lenguaje Core
+        for c in core_lang:
+            transitions.extend([
+                ("q0_start", c, "q2_core"),
+                ("q1_role", c, "q2_core"),
+                ("q2_core", c, "q2_core")
+            ])
+
+        # Nivel 3: Procesamiento / ETL
+        for pr in processing:
+            transitions.extend([
+                ("q0_start", pr, "q3_proc"),
+                ("q1_role", pr, "q3_proc"),
+                ("q2_core", pr, "q3_proc"),
+                ("q3_proc", pr, "q3_proc")
+            ])
+
+        # Nivel 4: Almacenamiento / BI / Herramientas
+        for st in storage_tools:
+            transitions.extend([
+                ("q3_proc", st, "q4_final"),
+                ("q4_final", st, "q4_final")
+            ])
+
+        return builder.build_automaton(
+            start_state="q0_start",
+            transitions=transitions,
+            final_states=["q3_proc", "q4_final"]
+        )
+
+    def accepts_ml_token(self, token: str) -> bool:
+        symbols = [Symbol(w) for w in token.upper().split()]
+        return self.ml_dfa.accepts(symbols)
+
+    def accepts_data_token(self, token: str) -> bool:
         symbols = [Symbol(w) for w in token.upper().split()]
         return self.data_dfa.accepts(symbols)
+
+    def accepts_token(self, token: str) -> bool:
+        symbols = [Symbol(w) for w in token.upper().split()]
+        return self.ml_dfa.accepts(symbols) or self.data_dfa.accepts(symbols)
