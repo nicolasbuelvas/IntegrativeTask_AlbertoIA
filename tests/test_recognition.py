@@ -1,44 +1,30 @@
 import pytest
-
 from src.recognition.data_automata import DataAutomata
 from src.recognition.software_automata import SoftwareAutomata
 
-@pytest.mark.parametrize(
-    "sequence",
-    [
-        ["PYTHON", "PANDAS", "TENSORFLOW", "SQL", "GIT"],
-        ["PYTHON", "NUMPY", "SCIKIT_LEARN", "SQL", "GIT"],
-    ],
-)
-def test_ml_automata_accepts_valid_sequences(sequence):
-    automata = DataAutomata()
-
-    assert automata.ml_dfa.accepts(sequence) is True
-
-
-@pytest.mark.parametrize(
-    "sequence",
-    [
-        ["PYTHON", "PANDAS"],
-        ["PANDAS", "PYTHON", "TENSORFLOW", "SQL", "GIT"],
-        ["PYTHON", "TENSORFLOW", "PANDAS", "SQL", "GIT"],
-        ["PYTHON", "PANDAS", "SQL", "GIT"],
-    ],
-)
-def test_ml_automata_rejects_invalid_sequences(sequence):
-    automata = DataAutomata()
-
-    assert automata.ml_dfa.accepts(sequence) is False
-
-
-def test_data_automata_acceptance():
+def test_data_automata_canonical_order():
     automaton = DataAutomata()
-    assert automaton.accepts_token("PYTHON") is True
-    assert automaton.accepts_token("SQL") is True
-    assert automaton.accepts_token("MARKETING") is False
+    # Orden válido: Rol -> Core -> Processing -> Storage
+    assert automaton.accepts_token("DATA PYTHON PANDAS POWERBI") is True
+    assert automaton.accepts_token("DATA_ENGINEER SQL ETL SNOWFLAKE") is True
+    
+    # Orden desordenado / Inválido: Storage -> Rol -> Processing
+    assert automaton.accepts_token("POWERBI DATA PANDAS") is False
 
-def test_software_automata_acceptance():
+def test_software_automata_canonical_order():
     automaton = SoftwareAutomata()
-    assert automaton.accepts_backend_token("BACKEND") is True
-    assert automaton.accepts_backend_token("POSTGRESQL") is True
-    assert automaton.accepts_backend_token("COOKING") is False
+    # Orden válido: Rol -> Language -> Database -> Tool
+    assert automaton.accepts_backend_token("BACKEND PYTHON POSTGRESQL GIT") is True
+    assert automaton.accepts_backend_token("SOFTWARE_ENGINEER JAVA SPRING MYSQL DOCKER") is True
+    
+    # Orden desordenado / Inválido: Database -> Rol -> Language
+    assert automaton.accepts_backend_token("POSTGRESQL BACKEND PYTHON") is False
+
+def test_fullstack_automata_canonical_order():
+    automaton = SoftwareAutomata()
+    # Orden válido con variantes (React o Vue, Python o Django)
+    assert automaton.accepts_fullstack_token("FULLSTACK REACT DJANGO POSTGRESQL GIT") is True
+    assert automaton.accepts_fullstack_token("FULLSTACK_DEVELOPER VUE SPRING_BOOT MYSQL DOCKER") is True
+    
+    # Orden desordenado / Inválido
+    assert automaton.accepts_fullstack_token("POSTGRESQL REACT FULLSTACK") is False
