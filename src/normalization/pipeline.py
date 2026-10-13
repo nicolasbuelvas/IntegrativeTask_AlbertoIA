@@ -1,7 +1,7 @@
 """Canonical qualification normalization and sorting pipeline."""
 
 from typing import Iterable, List, Optional, Set
-from src.config.taxonomy import PROFILES, SKILL_TO_CATEGORY
+from src.config.taxonomy import ALL_CANONICAL_SKILLS, PROFILES, SKILL_TO_CATEGORY
 from src.extraction.skill_extractor import SkillExtractor
 from src.models.profiles import ProfileDefinition, ProfileType
 from src.normalization.skill_transducers import build_unified_skill_transducer
@@ -18,7 +18,17 @@ class NormalizationPipeline:
         """Normalize a single raw skill token to its canonical symbol."""
         if not token:
             return None
-        return self.transducer.translate_word(token)
+        canon = self.transducer.translate_word(token)
+        if canon:
+            return canon
+        cleaned = token.strip()
+        if cleaned.upper() in ALL_CANONICAL_SKILLS:
+            return cleaned.upper()
+        for variant in (cleaned, cleaned.lower(), cleaned.title(), cleaned.capitalize()):
+            canon = self.transducer.translate_word(variant)
+            if canon:
+                return canon
+        return None
 
     def normalize_tokens(self, tokens: Iterable[str]) -> List[str]:
         """Normalize an iterable of skill tokens, removing duplicates while preserving order."""

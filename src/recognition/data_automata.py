@@ -76,7 +76,7 @@ class DataAutomata:
         core_lang = ["PYTHON", "SQL", "SCALA", "JAVA", "R"]
         processing = ["ETL", "SPARK", "AIRFLOW", "HADOOP", "DATABRICKS", "PANDAS", "KAFKA", "FLINK", "DBT"]
         storage_tools = [
-            "SQL", "POSTGRESQL", "MYSQL", "MARIADB", "SNOWFLAKE", "BIGQUERY", "REDSHIFT",
+            "SQL", "POSTGRESQL", "MYSQL", "MARIADB", "MONGODB", "REDIS", "SNOWFLAKE", "BIGQUERY", "REDSHIFT",
             "POWERBI", "TABLEAU", "GIT", "DOCKER", "AWS", "GCP", "AZURE"
         ]
 

@@ -12,13 +12,13 @@ class SoftwareAutomata:
 
         roles_and_langs = [
             "BACKEND", "BACKEND_DEVELOPER", "BACKEND_ENGINEER", "SOFTWARE_ENGINEER", "APPLICATION_ENGINEER",
-            "PYTHON", "JAVA", "RUBY", "GO", "C_SHARP", "PHP"
+            "PYTHON", "JAVA", "RUBY", "GO", "C_SHARP", "PHP", "SCALA"
         ]
         backend_tech = [
             "SPRING", "SPRING_BOOT", "DJANGO", "FASTAPI", "EXPRESS", "NODE_JS"
         ]
         databases = ["POSTGRESQL", "MYSQL", "MONGODB", "ORACLE", "REDIS", "SQL", "DYNAMODB", "MARIADB", "CASSANDRA"]
-        tools = ["GIT", "DOCKER", "KUBERNETES", "REST", "API", "GRAPHQL", "POSTMAN", "LINUX", "AWS"]
+        tools = ["GIT", "DOCKER", "KUBERNETES", "REST", "API", "REST_APIS", "GRAPHQL", "POSTMAN", "LINUX", "AWS"]
 
         for r in roles_and_langs:
             transitions.extend([
@@ -61,7 +61,7 @@ class SoftwareAutomata:
         frontend = ["REACT", "ANGULAR", "VUE", "HTML", "CSS", "NEXT_JS", "SASS", "REDUX", "TAILWIND"]
         backend = ["NODE_JS", "JAVA", "DJANGO", "SPRING_BOOT", "FASTAPI", "EXPRESS", "PYTHON", "RUBY", "GO", "C_SHARP", "PHP"]
         databases = ["POSTGRESQL", "MYSQL", "MONGODB", "REDIS", "SQL", "DYNAMODB", "MARIADB", "CASSANDRA"]
-        tools = ["GIT", "DOCKER", "KUBERNETES", "REST", "API", "GRAPHQL", "POSTMAN", "LINUX", "AWS"]
+        tools = ["GIT", "DOCKER", "KUBERNETES", "REST", "API", "REST_APIS", "GRAPHQL", "POSTMAN", "LINUX", "AWS"]
 
         # Paso 1: Rol / Lenguaje Web obligatorio para iniciar el perfil Full Stack
         for rl in fs_roles_and_langs:

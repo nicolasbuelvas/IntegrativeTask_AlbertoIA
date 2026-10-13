@@ -14,7 +14,7 @@ Fecha: Octubre 2026
 ---
 
 ### Section 1: Abstract
-Automated resume screening is prone to high false-rejection rates due to lexical aliases (e.g., `JS` vs `JavaScript`) and opaque decisions from statistical models. We present **ResumeLens**, a deterministic screening framework founded entirely on formal language theory. ResumeLens pipelines candidate texts across four discrete computational models: (1) Chomsky Type-3 regular expressions for contact and entity extraction, (2) 7-tuple Finite-State Transducers (FST) for qualification normalization into canonical alphabets, (3) Deterministic Finite Automata (DFA) for profile pattern recognition over canonically sorted sequences, and (4) Context-Free Grammars (CFG) in EBNF via textX for structured profile modeling. Evaluated across synthetic multi-domain datasets, ResumeLens achieved 100% deterministic classification across 99 automated test cases without algorithmic bias or stochastic hallucinations.
+Automated resume screening can be affected by lexical variation and opaque decision rules. **ResumeLens** is an educational prototype that applies formal-language techniques: regular expressions for extraction, finite-state transducers (FSTs) for skill normalization, finite automata for profile recognition, and a textX grammar for structured resume data. On this checkout, `pytest` collects 100 tests (all passing) and the six synthetic-resume end-to-end cases include a check that repeated runs produce identical DSL output. These tests do not establish real-world classification accuracy, fairness, or absence of bias. The classifier can accept a resume for more than one profile.
 
 ---
 
@@ -22,7 +22,7 @@ Automated resume screening is prone to high false-rejection rates due to lexical
 - **Lexical Fragmentation**: The same technical competency takes multiple textual representations (`PostgreSQL`, `Postgres`, `postgres`).
 - **Order Insensitivity in Naive Systems**: Unstructured keyword search ignores architectural hierarchies (e.g., requiring UI language $\to$ Framework $\to$ Server $\to$ Database).
 - **Interpretability Deficit**: Deep learning recruiters lack formal auditability, introducing compliance risks and unexplained rejections.
-- **Objective**: Develop a mathematically verifiable candidate screening engine that guarantees auditability and deterministic outcomes.
+- **Objective**: Build a small, inspectable prototype whose rule-based decisions can be traced through the implemented extraction, normalization, and automata stages.
 
 ---
 
@@ -47,7 +47,7 @@ Automated resume screening is prone to high false-rejection rates due to lexical
 
 #### 1. Normalization Transducers (FST 7-tuple)
 $$M = (Q, \Sigma, \Gamma, \delta, \omega, q_0, F)$$
-- **Input Alphabet ($\Sigma$)**: Raw characters $\{ \text{A-Z}, \text{a-z}, \text{0-9}, '.', '-', '\_', '\ ' \}$
+- **Input Alphabet ($\Sigma$)**: Raw characters that occur in the configured spelling variants: ASCII letters, the digit `3` (as in `Python3`), `.`, `-`, and the space character (47 symbols in the unified transducer)
 - **Output Alphabet ($\Gamma$)**: Canonical tokens $\{ \text{JAVASCRIPT}, \text{REACT}, \text{POSTGRESQL}, \text{SCIKIT\_LEARN}, \dots \}$
 - **Emission Function**: $\omega(q, c) = \varepsilon$ for prefix transitions; $\omega(q_{end}, c) = K \in \Gamma$ upon reaching final state.
 
@@ -58,7 +58,7 @@ $$\text{Sort}(S, P) = \text{order by } (\text{Priority}(\text{Category}(s, P)), 
 #### 3. Classification Automata (DFA 5-tuple)
 $$M_{profile} = (Q, \Sigma, \delta, q_0, F)$$
 - Evaluates the ordered sequence against strict role dependencies.
-- **Determinism Proof**: $\forall q \in Q, a \in \Sigma, |\delta(q, a)| \le 1$; no $\varepsilon$-transitions.
+- **Automata property**: The documented profile machines are classified from their actual transition structures. This describes the machines, not a proof of end-to-end fairness or correctness.
 
 #### 4. Context-Free Grammar (CFG)
 $$G = (V_N, V_T, P, S)$$
@@ -68,22 +68,22 @@ $$G = (V_N, V_T, P, S)$$
 
 ### Section 5: Experimental Evaluation & Results
 
-The system was evaluated against synthetic multi-role resumes with automated unit and E2E tests:
+The repository has six fictional resume files and 100 collected tests on this checkout. The table below summarizes the accepted profiles observed when the CLI processed the dataset; these are implementation outputs, not accuracy scores or fairness measurements.
 
-| Role Profile | Evaluated Sequence | Sorter Order | Automaton Verdict | Correctness |
-|:---|:---|:---|:---:|:---:|
-| **Full Stack** | `JS, React.js, Node, Postgres, Git` | Lang $\to$ UI $\to$ Srv $\to$ DB $\to$ VCS | **ACCEPTED** | Verified |
-| **Full Stack (Missing Lang)** | `React.js, Node, Postgres, Git` | UI $\to$ Srv $\to$ DB $\to$ VCS | **REJECTED** | Verified |
-| **Machine Learning** | `Python, Pandas, TensorFlow, SQL, Git` | Lang $\to$ ETL $\to$ Model $\to$ DB $\to$ VCS | **ACCEPTED** | Verified |
-| **Machine Learning (No Model)**| `Python, Pandas, SQL, Git` | Lang $\to$ ETL $\to$ DB $\to$ VCS | **REJECTED** | Verified |
-| **Backend Developer** | `Python, PostgreSQL, Git` | Lang $\to$ DB $\to$ VCS | **ACCEPTED** | Verified |
-| **Data Engineer** | `Python, Apache Spark, SQL` | Lang $\to$ Engine $\to$ Warehouse | **ACCEPTED** | Verified |
+| Synthetic resume | Accepted profile(s) observed |
+|:---|:---|
+| `fullstack_valid.txt` | Full Stack Developer; Backend Developer |
+| `fullstack_invalid.txt` | Backend Developer |
+| `backend_sample.txt` | Backend Developer |
+| `ml_engineer_valid.txt` | Machine Learning Engineer; Backend Developer |
+| `ml_engineer_invalid.txt` | Backend Developer; Data Engineer |
+| `data_engineer_sample.txt` | Data Engineer |
 
 ---
 
 ### Section 6: Key Conclusions & Future Work
-- **Mathematical Rigor**: Formal transducers and DFAs eliminate false rejections caused by naming variations without resorting to black-box models.
-- **Auditability**: Every decision corresponds to a deterministic path through a finite state machine, allowing candidate feedback with exact missing transitions.
+- **Implemented approach**: Transducers map supported skill variants to canonical tokens, and finite automata classify the resulting sequence according to the configured rules.
+- **Scope of evidence**: The tests exercise synthetic examples and software behavior. They do not demonstrate broad resume coverage, lower false-rejection rates, candidate suitability, or unbiased outcomes. Observed acceptance of non-target profiles shows that profile overlap remains a limitation.
 - **Future Improvements**:
   1. Integrating Context-Sensitive Grammars (Type-1) to model prerequisite experience years bound to specific technologies.
   2. Multi-language lexicons supporting Spanish and multilingual qualification synonyms.

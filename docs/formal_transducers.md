@@ -15,14 +15,15 @@ Let $\Sigma_{text}$ denote the standard ASCII/Unicode character set used in cand
 
 #### 1.1.1 Contact Information Language
 - **Email Language ($L_{email}$)**:
-  $$R_{email} = [a-zA-Z0-9._%+-]+ @ [a-zA-Z0-9.-]+ \. [a-zA-Z]{2,}$$
-  Recognizes standard RFC 5322 electronic mail identifiers.
+  $$R_{email} = \backslash b [A-Za-z0-9._\%+-]+ @ [A-Za-z0-9.-]+ \. [A-Za-z]\{2,\} \backslash b$$
+  Recognizes common email-address shapes; it is a practical pattern, not a full RFC 5322 grammar.
 - **Phone Language ($L_{phone}$)**:
-  $$R_{phone} = (?:\+\d{1,3}\s*)?(?:\(?\d{3}\)?[\s.-]*)?\d{3}[\s.-]*\d{4}$$
-  Recognizes international and Colombian standard telephone strings with arbitrary formatting characters.
-- **LinkedIn / GitHub Profile Languages**:
-  $$R_{linkedin} = (?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/([a-zA-Z0-9_-]+)$$
-  $$R_{github} = (?:https?:\/\/)?(?:www\.)?github\.com\/([a-zA-Z0-9_-]+)$$
+  $$R_{phone} = (?:(?:\backslash+|00)\backslash d\{1,3\}[\backslash s.-]?)?(?:\backslash(?\backslash d\{2,4\}\backslash)?[\backslash s.-]?)?\backslash d\{3,4\}[\backslash s.-]?\backslash d\{3,4\}\backslash b$$
+  Recognizes international and national telephone strings with optional separators. `ContactExtractor.extract_phone` additionally keeps only the first match whose digit count is between 7 and 15.
+- **LinkedIn / GitHub Profile Languages** (case-insensitive; the handle is the captured group):
+  $$R_{linkedin} = (?:https?:\/\/)?(?:www\.)?linkedin\.com\/in\/([A-Za-z0-9\_-]+)\/?$$
+  $$R_{github} = (?:https?:\/\/)?(?:www\.)?github\.com\/([A-Za-z0-9\_-]+)\/?$$
+- **Other metadata**: `src/extraction/regex_patterns.py` also defines patterns for a portfolio URL (any `http(s)` URL that is not GitHub or LinkedIn), a name (an explicit `Name:`/`Candidate:`/`Full Name:` line, or an inferred header line of two to four capitalized words), years of experience (`N years of experience`), and an experience summary sentence.
 
 #### 1.1.2 Technical Skill Entity Language
 For every canonical skill token $k \in K$, there exists a regular language $L_k$ recognizing its lexical surface variations within text boundaries:
@@ -32,6 +33,8 @@ where $v_i \in \text{Variations}(k)$. For example:
 - $R_{REACT} = \backslash b React(?:\.js \mid JS)? \backslash b$
 - $R_{POSTGRESQL} = \backslash b Postgre(?:SQL \mid s) \backslash b$
 - $R_{SCIKIT\_LEARN} = \backslash b (scikit[- ]learn \mid sklearn) \backslash b$
+
+Most skill patterns in `src/extraction/skill_extractor.py` are compiled with `re.IGNORECASE` (for example `React`, `Postgre(?:SQL|s)`, `scikit[- ]learn`), so they also match `REACT` or `POSTGRESQL`. The exceptions are `JavaScript|Javascript|JS`, `TypeScript|Typescript|TS`, `Java`, and `Golang|Go`, which are case-sensitive. The extractor returns the matched surface string unchanged; it does not canonicalize it. Canonicalization is the job of Stage 2, whose transducers are case-sensitive (see Section 2.4).
 
 ---
 
@@ -56,18 +59,21 @@ Where:
 
 The transducer $M_{SE} = (Q_{SE}, \Sigma_{SE}, \Gamma_{SE}, \delta_{SE}, \omega_{SE}, q_0, F_{SE})$ normalizes lexical variations of frontend, backend, database, and tool skills.
 
-- **Input Alphabet ($\Sigma_{SE}$)**:
-  $$\Sigma_{SE} = \{ \text{A-Z}, \text{a-z}, \text{0-9}, '.', '-', '\_', '\ ', '\#' \}$$
+- **Input Alphabet ($\Sigma_{SE}$)**: the 43 characters that occur in the 66 configured Software Engineering variants: ASCII letters (not all 52 occur), the space character, and `.` (for example in `Node.js`). The digits, `-`, `_`, and `#` do not occur in any variant.
+  $$\Sigma_{SE} \subset \{ \text{A-Z}, \text{a-z}, '.', '\ ' \}$$
 - **Output Alphabet ($\Gamma_{SE}$)**:
   $$\Gamma_{SE} = \{ \text{JAVASCRIPT}, \text{TYPESCRIPT}, \text{REACT}, \text{ANGULAR}, \text{VUE}, \text{NODE\_JS}, \text{DJANGO}, \text{SPRING\_BOOT}, \text{FASTAPI}, \text{EXPRESS}, \text{JAVA}, \text{GO}, \text{POSTGRESQL}, \text{MYSQL}, \text{MONGODB}, \text{REDIS}, \text{SQL}, \text{GIT}, \text{DOCKER}, \text{REST\_APIS}, \text{GRAPHQL} \}$$
 - **States ($Q_{SE}$)**:
   $$Q_{SE} = \{ q_0 \} \cup \{ q_{w,i} \mid w \in \text{Domain}(M_{SE}), 1 \le i \le |w| \}$$
+  In the implementation, $|Q_{SE}| = 438$ and $|F_{SE}| = 66$ (one final state per variant).
 - **Transitions and Emissions ($\delta_{SE}, \omega_{SE}$)**:
-  For each variant word $w = c_1 c_2 \dots c_n$ mapped to canonical symbol $K \in \Gamma_{SE}$:
+  For each variant word $w = c_1 c_2 \dots c_n$ mapped to canonical symbol $K \in \Gamma_{SE}$ (with $n \ge 2$):
   - $\delta(q_0, c_1) = q_{w,1}, \quad \omega(q_0, c_1) = \varepsilon$
   - $\delta(q_{w,i}, c_{i+1}) = q_{w,i+1}, \quad \omega(q_{w,i}, c_{i+1}) = \varepsilon \quad (\forall 1 \le i < n - 1)$
   - $\delta(q_{w,n-1}, c_n) = q_{w,n}, \quad \omega(q_{w,n-1}, c_n) = K$
   where $q_{w,n} \in F_{SE}$.
+
+  **Structure note.** `TransducerBuilder.add_word_mapping` builds one separate linear branch per variant; branches share only $q_0$ and do not share prefixes. Two variants that start with the same character therefore both have a transition from $q_0$ on that character, so the transducer is **nondeterministic**: $\delta$ is a relation $Q \times \Sigma \to 2^Q$, not a function (20 such $(q_0, c)$ pairs in $M_{SE}$). The `pyformlang` object evaluates the relation correctly. The convenience dictionary returned by `get_formal_tuple()` stores a single target per $(q, c)$, so it holds only 397 of the 437 transitions of $M_{SE}$; use it for inspection, not as the complete $\delta$.
 
 #### Transition Sub-table Example:
 | Source State | Input Symbol ($c \in \Sigma$) | Target State | Output Symbol ($\omega \in \Gamma^*$) |
@@ -151,6 +157,24 @@ stateDiagram-v2
     q_PT6 --> q_PT7 : 'h' / PYTORCH
     q_PT7 --> [*]
 ```
+
+---
+
+### 2.4 Unified Transducer and Coverage Limits
+
+`NormalizationPipeline` uses the unified transducer `build_unified_skill_transducer()`, the union of $M_{SE}$ (66 variants) and $M_{AI}$ (47 variants) with shared entries merged: 104 variants, $|Q| = 743$, $|F| = 104$, $|\Sigma| = 47$, and the 34 canonical output tokens of the taxonomy. $M_{AI}$ has $|Q| = 356$, $|F| = 47$, and $\Sigma_{AI}$ contains letters, the digit `3` (in `Python3`), `-` (in `scikit-learn`), and the space character.
+
+The transducers recognize a variant only when the whole input string equals one of the listed spellings **exactly, including letter case**. Stage 1 is broader than Stage 2 (Section 1.1.2), so some strings that the extractor returns are not in the transducer domain and `translate_word` returns `None`; `NormalizationPipeline.normalize_tokens` drops those silently. Examples verified on this checkout:
+
+| Extracted string | Normalized result |
+|:---|:---|
+| `Python3`, `Postgres`, `Node.js`, `REST APIs`, `Scikit-learn`, `Apache Spark` | `PYTHON`, `POSTGRESQL`, `NODE_JS`, `REST_APIS`, `SCIKIT_LEARN`, `SPARK` |
+| `PYTHON`, `REACT`, `POSTGRESQL`, `GIT`, `DOCKER`, `JAVA`, `SCALA` | dropped (all-uppercase) |
+| `Node JS`, `NODE.JS`, `Spring  Boot`, `Springboot`, `Mongo DB` | dropped |
+| `Scikit-Learn`, `Pytorch`, `Apache  Spark`, `Big Query`, `Google Big Query` | dropped |
+| `RESTful API`, `RESTful APIs`, `Rest`, `rest` | dropped |
+
+Extending coverage means adding the missing spellings to `SOFTWARE_SKILL_SYNONYMS` or `AI_DATA_SKILL_SYNONYMS`, or lower-casing tokens before translation.
 
 ---
 

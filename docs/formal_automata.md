@@ -39,7 +39,7 @@ $$M_{FS} = (Q_{FS}, \Sigma_{FS}, \delta_{FS}, q_{0,FS}, F_{FS})$$
   - $q2\_fe$: Frontend library/framework verified (`REACT`, `ANGULAR`, `VUE`, `HTML`, `CSS`, etc.).
   - $q3\_be$: Backend technology verified (`NODE_JS`, `DJANGO`, `SPRING_BOOT`, `FASTAPI`, `PYTHON`, etc.).
   - $q4\_db$: Database verified (`POSTGRESQL`, `MYSQL`, `MONGODB`, `REDIS`, `SQL`, etc.).
-  - $q5\_final$: Version control and tooling verified (`GIT`, `DOCKER`, `REST_APIS`, etc.).
+  - $q5\_final$: Version control and tooling verified (`GIT`, `DOCKER`, `REST`, `API`, `GRAPHQL`, `KUBERNETES`, `AWS`, etc.). The automaton has no transition for the canonical token `REST_APIS`; see Section 8.
 - **Start State**: $q_{0,FS} = q0\_start$
 - **Accepting States**: $F_{FS} = \{ q5\_final \}$
 - **Classification**: DFA (Deterministic Finite Automaton).
@@ -100,7 +100,7 @@ $$M_{ML} = (Q_{ML}, \Sigma_{ML}, \delta_{ML}, q_{0,ML}, F_{ML})$$
 ```mermaid
 stateDiagram-v2
     [*] --> q0_start
-    q0_start --> q1_lang : PYTHON / ML_ROLE
+    q0_start --> q1_lang : PYTHON / R / JULIA / MACHINE_LEARNING
     q1_lang --> q2_prep : PANDAS / NUMPY
     q2_prep --> q3_framework : SCIKIT_LEARN / TENSORFLOW / PYTORCH
     q3_framework --> q4_db : SQL / POSTGRESQL
@@ -175,9 +175,12 @@ $$M_{DE} = (Q_{DE}, \Sigma_{DE}, \delta_{DE}, q_{0,DE}, F_{DE})$$
 stateDiagram-v2
     [*] --> q0_start
     q0_start --> q1_role : DATA / DATA_ENGINEER
+    q0_start --> q2_core : PYTHON / SQL / SCALA
+    q0_start --> q3_proc : SPARK / AIRFLOW / HADOOP / ETL
     q1_role --> q2_core : PYTHON / SQL / SCALA
+    q1_role --> q3_proc : SPARK / AIRFLOW / HADOOP / ETL
     q2_core --> q3_proc : SPARK / AIRFLOW / HADOOP / ETL
-    q3_proc --> q4_final : SNOWFLAKE / BIGQUERY / POSTGRESQL / GIT
+    q3_proc --> q4_final : SNOWFLAKE / BIGQUERY / POSTGRESQL / SQL / GIT / DOCKER
     q3_proc --> [*]
     q4_final --> [*]
 ```
@@ -203,3 +206,19 @@ The automata are integrated directly into the screening pipeline through `src.pi
 - Normalized tokens are sorted hierarchically by profile category via `NormalizationPipeline.sort_for_profile()`.
 - The sequence is converted to pyformlang `Symbol` instances and evaluated deterministically against `SoftwareAutomata` (`fullstack_dfa`, `backend_dfa`) and `DataAutomata` (`ml_dfa`, `data_dfa`).
 - Verified acceptance vectors populate the candidate profile DSL model for syntax/semantic validation and report generation.
+
+---
+
+## 8. Alphabet Coverage and Known Limitations
+
+The following points compare the automata with the canonical taxonomy in `src/config/taxonomy.py` and with the tokens the pipeline can actually produce. They were verified by inspecting the built automata and running the pipeline.
+
+1. **Role tokens are unreachable from the pipeline.** Tokens such as `FULLSTACK`, `BACKEND_DEVELOPER`, `MACHINE_LEARNING`, `DATA_ENGINEER`, `HTML`, `CSS`, `KUBERNETES`, or `AWS` appear in the automata, but the extractor and transducers never emit them, and `NormalizationPipeline.sort_for_profile` keeps only tokens in the profile's canonical alphabet. In practice the automata are driven by the 34 canonical tokens of the taxonomy; the extra transitions only matter if an automaton is called directly with other symbols.
+2. **`REST_APIS` has no transition in any automaton.** The transducers emit `REST_APIS`, and the taxonomy places it in the Full Stack and Backend alphabets (category `API`, between `DATABASE` and `VERSION_CONTROL`). The automata define transitions for `REST` and `API` only. A sorted sequence that contains `REST_APIS` is rejected by both software automata. For example `JAVASCRIPT, REACT, NODE_JS, POSTGRESQL, GIT` is accepted by Full Stack, but adding `REST_APIS` makes it rejected.
+3. **Alphabet entries missing from an automaton.** Taxonomy tokens with no transition: `SCALA` in the Backend automaton, `REDIS` in the ML and Data Engineer automata, and `MONGODB` in the Data Engineer automaton. A resume that yields one of these tokens for that profile is rejected, because the partial transition function has no entry and the automaton rejects.
+4. **Backend overlap.** The Backend automaton accepts any `language/framework → database → tool` sequence, so resumes whose primary target is Full Stack or ML are also accepted as Backend. This is the overlap shown in the README dataset table.
+5. **`sort_for_profile` ties.** Tokens are ordered by category priority and then alphabetically. Tokens whose category is not in the profile's `canonical_order` (for example `SQL`/`POSTGRESQL` for Data Engineer, whose order uses `WAREHOUSE_DATABASE`) are placed last.
+
+## 9. Test Coverage
+
+`tests/test_recognition.py` has nine tests: three parametrized accepted sequences and three parametrized rejected sequences for the ML automaton, plus one canonical-order test each for the Data Engineer, Backend, and Full Stack automata. `tests/test_e2e_resumes.py` checks each dataset resume against its intended target profile. No test currently covers the gaps in Section 8.
