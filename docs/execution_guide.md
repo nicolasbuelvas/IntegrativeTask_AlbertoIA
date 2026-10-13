@@ -44,7 +44,7 @@ python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```
 
-The Windows, macOS, and Linux commands follow the platform’s standard venv and pip usage. This task ran on Windows. The exact `py -3.10` command was not available here: the launcher points to an inaccessible Python installation. A fresh temporary venv was created using the bundled Python 3.12.14, but installing the package could not complete: pip could not resolve the PyPI hostname while fetching `setuptools>=61.0`. Therefore, the fresh venv did not run the suite or CLI. The tests and CLI examples below were run with the existing Python 3.13 environment; the CLI examples were run from a temporary copy of the repository to keep generated files outside the project. macOS and Linux were not available for validation in this session.
+The Windows, macOS, and Linux commands follow the platform’s standard venv and pip usage. The tests and CLI examples below were verified on Windows with the repository’s existing Python 3.13.0 virtual environment (`.venv`); `python -m src.main --demo`, the `summary` and `dsl` modes, and the full test suite were re-run for this revision. A from-scratch install with the exact `py -3.10` command, and macOS and Linux, were not re-run.
 
 ## Running the CLI
 
@@ -166,7 +166,7 @@ Run all tests from the repository root with:
 python -m pytest -q
 ```
 
-On this checkout, pytest collected 94 tests and all 94 passed. These focused commands were also run:
+On this checkout, pytest collected 100 tests and all 100 passed. These focused commands were also run:
 
 ```bash
 # Stage 1: extraction
@@ -188,7 +188,7 @@ python -m pytest -q tests/test_visualization_html.py tests/test_visualization_md
 python -m pytest -q tests/test_environment.py
 ```
 
-The observed focused results were 15 extraction tests, 10 normalization tests, 8 recognition/taxonomy tests, 44 DSL/pipeline/E2E tests, 16 visualization tests, and 1 environment test. The groups together cover all 94 tests.
+The observed focused results were 15 extraction tests, 10 normalization tests, 14 recognition/taxonomy tests (9 recognition + 5 taxonomy), 44 DSL/pipeline/E2E tests (3 + 4 + 37), 16 visualization tests (10 HTML + 6 Markdown), and 1 environment test. The groups together cover all 100 tests.
 
 To list tests without running them:
 
@@ -201,9 +201,12 @@ python -m pytest --collect-only -q
 1. **`ModuleNotFoundError: No module named 'src'` — possible cause.** Run from the repository root or install the package into the active virtual environment with `python -m pip install -e ".[dev]"`.
 2. **`No module named src.cli` — anticipated entry-point mismatch.** This checkout has `src/main.py`, not `src/cli.py`; invoke `python -m src.main`.
 3. **`ModuleNotFoundError` for `pyformlang`, `textx`, or `jinja2` — possible cause.** The dependencies are declared in `pyproject.toml`; activate the intended venv and install the project. Check `python -m pip show pyformlang textx jinja2`.
-4. **Editable installation cannot fetch `setuptools>=61.0` — reproduced in this session.** The fresh venv was created, but pip reported DNS failure while contacting PyPI. Retry when network access to the configured package index is available.
+4. **Editable installation cannot fetch `setuptools>=61.0` — possible cause.** The editable install needs network access to the package index for the build backend. If pip reports a DNS or connection failure, retry when the connection is available.
 5. **textX `TextXSyntaxError` — reproduced with malformed DSL.** The parser reported `None:1:19: Expected STRING => 'E_PROFILE *unquoted'` for `CANDIDATE_PROFILE unquoted`. Check quoted strings and the section order in `src/dsl/grammar/resume.tx`. The resume CLI accepts plain-text resumes; its DSL parser handles generated DSL internally.
 6. **`UnicodeDecodeError` — possible cause.** `ResumeLensPipeline.process_file` reads input as UTF-8. Save the resume as UTF-8 and try again.
 7. **`Resume file '…' not found` — reproduced with a missing relative path.** Relative input paths are resolved from the current working directory. Check the filename or pass an absolute path.
-8. **A non-target profile is also accepted — reproduced in `--demo`.** Some current automata accept broader token sequences than the dataset’s intended target. This guide reports actual output; the profile logic is outside this documentation task.
+8. **A non-target profile is also accepted — reproduced in `--demo`.** Some current automata accept broader token sequences than the dataset’s intended target; for example, the Backend automaton accepts any `language → database → tool` sequence. This guide reports the actual output.
+9. **`Error processing resume ...: Resume missing required candidate name or email contact information.` — reproduced.** The pipeline needs both a name and an email. Put the name on its own line near the top (two to four capitalized words) and include an email address.
+10. **`TextXSyntaxError ... Expected STRING => ' SKILLS:  *EVALUATION'` when processing a resume — reproduced.** The resume contained a name and email but no skill that the extractor and transducers recognize, and the grammar requires at least one skill. Add a supported skill spelled as listed in `src/normalization/skill_transducers.py`; see also “Known limitations” in the README.
+11. **A skill is in the resume but missing from `NORMALIZED CANONICAL SKILLS` — reproduced.** The extraction regexes are case-insensitive, but the transducers only know the exact spellings in `src/normalization/skill_transducers.py`. For example, `PYTHON`, `REACT`, `Node JS`, and `RESTful APIs` are extracted but not normalized; `Python`, `React`, `Node.js`, and `REST APIs` are.
 9. **Output file cannot be written — possible cause.** Check the destination path and permissions. For DSL-only mode, create the parent directory before passing a nested `--output` path.

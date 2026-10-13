@@ -14,7 +14,7 @@ Fecha: Octubre 2026
 ---
 
 ### Section 1: Abstract
-Automated resume screening can be affected by lexical variation and opaque decision rules. **ResumeLens** is an educational prototype that applies formal-language techniques: regular expressions for extraction, finite-state transducers (FSTs) for skill normalization, finite automata for profile recognition, and a textX grammar for structured resume data. On this checkout, `pytest` collects 94 tests and the six synthetic-resume end-to-end cases include a check that repeated runs produce identical DSL output. These tests do not establish real-world classification accuracy, fairness, or absence of bias. The classifier can accept a resume for more than one profile.
+Automated resume screening can be affected by lexical variation and opaque decision rules. **ResumeLens** is an educational prototype that applies formal-language techniques: regular expressions for extraction, finite-state transducers (FSTs) for skill normalization, finite automata for profile recognition, and a textX grammar for structured resume data. On this checkout, `pytest` collects 100 tests (all passing) and the six synthetic-resume end-to-end cases include a check that repeated runs produce identical DSL output. These tests do not establish real-world classification accuracy, fairness, or absence of bias. The classifier can accept a resume for more than one profile.
 
 ---
 
@@ -47,7 +47,7 @@ Automated resume screening can be affected by lexical variation and opaque decis
 
 #### 1. Normalization Transducers (FST 7-tuple)
 $$M = (Q, \Sigma, \Gamma, \delta, \omega, q_0, F)$$
-- **Input Alphabet ($\Sigma$)**: Raw characters $\{ \text{A-Z}, \text{a-z}, \text{0-9}, '.', '-', '\_', '\ ' \}$
+- **Input Alphabet ($\Sigma$)**: Raw characters that occur in the configured spelling variants: ASCII letters, the digit `3` (as in `Python3`), `.`, `-`, and the space character (47 symbols in the unified transducer)
 - **Output Alphabet ($\Gamma$)**: Canonical tokens $\{ \text{JAVASCRIPT}, \text{REACT}, \text{POSTGRESQL}, \text{SCIKIT\_LEARN}, \dots \}$
 - **Emission Function**: $\omega(q, c) = \varepsilon$ for prefix transitions; $\omega(q_{end}, c) = K \in \Gamma$ upon reaching final state.
 
@@ -68,7 +68,7 @@ $$G = (V_N, V_T, P, S)$$
 
 ### Section 5: Experimental Evaluation & Results
 
-The repository has six fictional resume files and 94 collected tests on this checkout. The table below summarizes the accepted profiles observed when the CLI processed the dataset; these are implementation outputs, not accuracy scores or fairness measurements.
+The repository has six fictional resume files and 100 collected tests on this checkout. The table below summarizes the accepted profiles observed when the CLI processed the dataset; these are implementation outputs, not accuracy scores or fairness measurements.
 
 | Synthetic resume | Accepted profile(s) observed |
 |:---|:---|

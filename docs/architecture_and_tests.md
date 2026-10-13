@@ -28,7 +28,7 @@ graph TD
 ### 2.1 Information Extraction Module (`src.extraction`)
 - **`ContactExtractor.extract(text: str) -> ContactInfo`**
   - Input: Raw plain-text string of a candidate curriculum.
-  - Output: Immutable `ContactInfo` dataclass containing `name`, `email`, `phone`, `linkedin`, `github`, `portfolio`, `years_of_experience`.
+  - Output: Immutable `ContactInfo` dataclass containing `name`, `email`, `phone`, `linkedin`, `github`, `portfolio`, `years_of_experience`, `experience_summary`.
 - **`SkillExtractor.extract_unique_skills(text: str) -> List[str]`**
   - Input: Raw resume text.
   - Output: Deduplicated list of surface qualification strings identified across boundary patterns.
@@ -76,7 +76,7 @@ graph TD
 
 ## 3. Test Suite Design and Scenario Matrix
 
-The current test suite contains 94 collected tests, as reported by `pytest --collect-only -q` on this checkout. Test counts can change as tests are added or removed.
+The current test suite contains 100 collected tests, and all 100 pass, as reported by `pytest -q` on this checkout. Test counts can change as tests are added or removed. The count per file is: `test_e2e_resumes.py` 37, `test_visualization_html.py` 10, `test_visualization_md.py` 6, `test_extraction.py` 15, `test_normalization.py` 10, `test_recognition.py` 9, `test_taxonomy.py` 5, `test_pipeline.py` 4, `test_dsl.py` 3, and `test_environment.py` 1.
 
 ### 3.1 Unit and Component Testing
 
@@ -84,7 +84,7 @@ The current test suite contains 94 collected tests, as reported by `pytest --col
 |:---|:---|:---|
 | `test_extraction.py` | `src.extraction` | Boundary regexes for email, phone, social links, skill surface synonyms. |
 | `test_normalization.py` | `src.normalization` | FST 7-tuple state transitions, word emissions, deterministic category sorting. |
-| `test_recognition.py` | `src.recognition` | DFA acceptance of valid sequences and strict rejection of out-of-order/incomplete sequences. |
+| `test_recognition.py` | `src.recognition` | DFA acceptance of valid sequences and strict rejection of out-of-order/incomplete sequences. Includes three parametrized accepted and three parametrized rejected sequences for the ML automaton (e.g. `PYTHON, PANDAS` is rejected as incomplete; `PANDAS, PYTHON, ...` and `PYTHON, TENSORFLOW, PANDAS, ...` are rejected as out of order). The Full Stack, Backend, and Data Engineer automata each have one canonical-order test. |
 | `test_taxonomy.py` | `src.config` | Canonical alphabet disjointness and profile order consistency. |
 | `test_dsl.py` | `src.dsl` | textX parsing, AST serialization, lexical/syntactic failure, semantic email check. |
 | `test_visualization_html.py`| `src.visualization` | Jinja2 template rendering, HTML escaping, and CSS injection. |
@@ -100,7 +100,7 @@ A synthetic dataset in `data/resumes/` exercises real-world document variations:
 | `fullstack_valid.txt` | Lina Marquez | Full Stack Developer | **ACCEPTED** | Has JS, React, Node, Postgres, Git in proper hierarchical progression. |
 | `fullstack_invalid.txt` | Mateo Rios | Full Stack Developer | **REJECTED** | Missing required client-side foundational language (`JS`/`TS`). |
 | `ml_engineer_valid.txt` | Celeste Arboleda | Machine Learning Engineer | **ACCEPTED** | Has Python, Pandas, TensorFlow, SQL, Git satisfying ML sequence. |
-| `ml_engineer_invalid.txt` | Dario Pineda | Machine Learning Engineer | **REJECTED** | Missing machine learning / deep learning framework layer. |
+| `ml_engineer_invalid.txt` | Dario Pineda | Machine Learning Engineer | **REJECTED** | Has scikit-learn, PyTorch, and TensorFlow but no data-preparation layer (`PANDAS`/`NUMPY`), so the ML automaton has no transition from `PYTHON` to a framework. |
 | `backend_sample.txt` | Sara Beltran | Backend Developer | **ACCEPTED** | Has Python, PostgreSQL, Git meeting server-side requirements. |
 | `data_engineer_sample.txt` | Rafaela Quintero | Data Engineer | **ACCEPTED** | Has Python, Apache Spark, SQL satisfying distributed data requirements. |
 
