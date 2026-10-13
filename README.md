@@ -1,154 +1,216 @@
-# ResumeLens: Formal Language-Based Resume Screening
+# ResumeLens — Formal resume screening
 
-Proyecto Integrador - Estructuras Discretas III (CyED III, Código 09772)  
-Universidad Icesi, Semestre 2026-2  
+Universidad Icesi\
+Curso: Estructuras Discretas III (CyED III, Código 09772)\
+Proyecto Integrador: ResumeLens\
+Equipo: Nicolás Santiago Buelvas González, Daniel Alexander Nastul Flórez, Albert Valencia Escobar\
 Profesor: Andrés Aristizábal (Grupo 3)
 
----
+**Authors and contributions**
 
-## 1. Integrantes del Equipo
+- **Nicolás Buelvas:** Stages 1–2, extraction and skill normalization.
+- **Daniel Nastul:** Stages 3–4, profile recognition and DSL.
+- **Albert Valencia:** visualization, validation work, and literature review.
 
-- Nicolás Santiago Buelvas González
-- Daniel Alexander Nastul Flórez
-- Albert Valencia Escobar
+ResumeLens is a Python project for extracting resume data, normalizing skills, recognizing four profiles, and creating reports.
 
-Entorno de desarrollo principal: Visual Studio Code / Cursor  
-Gestor de paquetes y entorno virtual: `uv`  
-Intérprete base: Python 3.11+
+Python version: 3.10+
 
----
+## Contents
 
-## 2. Descripción General del Sistema
+- [Overview](#overview)
+- [Features](#features)
+- [Project structure](#project-structure)
+- [Requirements and installation](#requirements-and-installation)
+- [Quick start](#quick-start)
+- [Command-line options](#command-line-options)
+- [Tests](#tests)
+- [Formal and research documents](#formal-and-research-documents)
+- [Synthetic dataset](#synthetic-dataset)
+- [Authors and contributions](#authors-and-contributions)
+- [Academic use](#academic-use)
 
-ResumeLens es un sistema formal para el análisis y clasificación de hojas de vida basadas en texto plano. En lugar de utilizar modelos heurísticos o de lenguaje estadístico opacos, el sistema implementa una arquitectura rigurosa dividida en 5 etapas fundamentadas en la teoría de lenguajes formales y autómatas:
+## Overview
 
-1. **Extracción Léxica (Expresiones Regulares)**: Identificación de metadatos de contacto (nombre, correo electrónico, teléfono, LinkedIn, GitHub) y extracción de menciones crudas de habilidades tecnológicas mediante patrones regulares compilados con `re`.
-2. **Normalización de Cualificaciones (Transductores de Estados Finitos - FST)**: Mapeo formal 7-tupla implementado con `pyformlang` que convierte variaciones léxicas y sinónimos (e.g. `JS`, `React.js`, `postgres`) en símbolos canónicos unificados (`JAVASCRIPT`, `REACT`, `POSTGRESQL`). Incluye ordenamiento canónico determinista por jerarquía de rol.
-3. **Reconocimiento de Patrones (Autómatas Finitos Deterministas - DFA)**: Clasificación de perfiles profesionales mediante autómatas que evalúan si la secuencia ordenada de cualificaciones canónicas satisface los patrones definidos para el rol.
-4. **Especificación en DSL (Gramáticas Libres de Contexto - CFG con textX)**: Generación, validación sintáctica/semántica y serialización del perfil resultante en un lenguaje de dominio específico definido en EBNF.
-5. **Visualización y Reportes**: Generación de documentos finales en HTML autocontenido (con estilos CSS integrados) y Markdown estructurado a partir del AST validado.
+ResumeLens is a project that analyzes plain-text resumes with regular expressions, finite-state transducers, deterministic finite automata, a textX DSL, and HTML or Markdown reports.
 
----
-
-## 3. Perfiles Profesionales Soportados
-
-El sistema soporta cuatro perfiles evaluados de forma simultánea e independiente:
-
-1. **Full Stack Developer** (Predefinido): Requiere lenguajes frontend, frameworks frontend, frameworks backend, bases de datos y herramientas de control de versiones.
-2. **Machine Learning Engineer** (Predefinido): Requiere lenguaje Python, librerías de manipulación de datos (Pandas/NumPy), frameworks de deep learning/ML (Scikit-Learn/TensorFlow), SQL y Git.
-3. **Backend Developer** (Selección del equipo - Software Engineering): Enfocado en lenguajes de servidor, frameworks backend, bases de datos relacionales/NoSQL y arquitecturas API.
-4. **Data Engineer** (Selección del equipo - AI/Data): Enfocado en computación distribuida (Spark), orquestación y bases de datos analíticas.
-
----
-
-## 4. Instalación y Requisitos
-
-El proyecto utiliza `uv` como gestor de paquetes y dependencias.
-
-### Prerrequisitos
-- Python 3.11 instalado en el sistema.
-- `uv` instalado (`pip install uv` o mediante el instalador oficial).
-
-### Configuración del entorno
-Clonar el repositorio y sincronizar el entorno virtual:
-
-```bash
-git clone https://github.com/nicolasbuelvas/IntegrativeTask_AlbertoIA.git
-cd IntegrativeTask_AlbertoIA
-uv sync
+```mermaid
+flowchart LR
+    A["Plain-text resume"] --> B["Stage 1: regex extraction"]
+    B --> C["Stage 2: FST skill normalization"]
+    C --> D["Stage 3: profile automata"]
+    D --> E["Stage 4: textX DSL parse and validation"]
+    E --> F["Stage 5: HTML and Markdown reports"]
 ```
 
----
+The pipeline handles four configured profile types: Full Stack Developer, Machine Learning Engineer, Backend Developer, and Data Engineer. A profile marked `ACCEPTED` means its current automaton accepted the normalized skill sequence; it does not prove a candidate’s ability or job fit.
 
-## 5. Guía de Uso de la Interfaz de Línea de Comandos (CLI)
+## Features
 
-El punto de entrada principal es el módulo `src.main`.
+- Extract contact details and supported skill mentions from UTF-8 plain-text resumes.
+- Normalize configured spelling variants to canonical skill tokens.
+- Evaluate canonical tokens with four profile automata.
+- Parse, validate, and serialize a structured resume DSL model.
+- Generate HTML and Markdown reports, or print DSL and a console summary.
+- Run a batch demo on the six fictional resumes in `data/resumes/`.
 
-### Ejecución básica (Resumen en consola)
-Procesa una hoja de vida en texto plano y muestra la extracción, normalización y resultados de clasificación por autómata:
+## Project structure
 
-```bash
-uv run python -m src.main data/resumes/fullstack_valid.txt
-```
-
-### Generación de reporte HTML
-Genera un archivo HTML visualmente enriquecido con el resultado del análisis:
-
-```bash
-uv run python -m src.main data/resumes/fullstack_valid.txt --format html --output output/reporte_lina.html
-```
-
-### Generación de resumen Markdown
-Genera el reporte estructurado en formato Markdown:
-
-```bash
-uv run python -m src.main data/resumes/fullstack_valid.txt --format markdown --output output/resumen_lina.md
-```
-
-### Exportación del modelo en formato DSL
-Exporta la especificación formal del candidato en la gramática de ResumeLens (`.dsl`):
-
-```bash
-uv run python -m src.main data/resumes/fullstack_valid.txt --format dsl --output output/candidato.dsl
-```
-
-### Generación de todos los artefactos simultáneamente
-Genera el resumen por consola y guarda los 3 archivos (`.html`, `.md`, `.dsl`) a la vez:
-
-```bash
-uv run python -m src.main data/resumes/fullstack_valid.txt --format all --output output/resultado_completo
-```
-
-### Modo Demostración (Batch sobre el dataset)
-Ejecuta la clasificación sobre todas las hojas de vida sintéticas ubicadas en `data/resumes/` y presenta una tabla comparativa de estados:
-
-```bash
-uv run python -m src.main --demo
-```
-
----
-
-## 6. Ejecución de Pruebas Automatizadas
-
-La suite de pruebas automatizadas está construida sobre `pytest` y cubre pruebas unitarias de cada etapa formal, pruebas de gramática y pruebas de integración extremo a extremo:
-
-```bash
-uv run pytest
-```
-
-Para ejecutar pruebas con detalle de cobertura y ejecución verbosa:
-
-```bash
-uv run pytest -v
-```
-
----
-
-## 7. Estructura del Repositorio
+Repository tree, shown to depth three:
 
 ```text
-IntegrativeTask_AlbertoIA/
-├── data/
-│   └── resumes/                     # Dataset sintético de hojas de vida (.txt)
-├── docs/
-│   ├── literature_review.md         # Revisión bibliográfica sobre modelos formales
-│   ├── formal_transducers.md        # Especificaciones formales 7-tuplas y diagramas de FST
-│   ├── formal_automata.md           # Especificaciones formales 5-tuplas y diagramas de DFA
-│   ├── dsl_specification.md         # Especificación EBNF de la gramática DSL (textX)
-│   ├── architecture_and_tests.md    # Diseño modular de software y matriz de pruebas
-│   └── research_poster.md           # Contenido estructurado del póster de investigación (en inglés)
-├── src/
-│   ├── config/                      # Taxonomía canónica y alfabetos de perfiles
-│   ├── dsl/                         # Gramática textX (resume.tx), parser y serializador
-│   ├── extraction/                  # Extractores basados en expresiones regulares
-│   ├── models/                      # Clases de dominio y dataclasses
-│   ├── normalization/               # Transductores FST y pipeline de normalización
-│   ├── recognition/                 # Autómatas DFA para clasificación de perfiles
-│   ├── visualization/               # Renderers HTML (Jinja2) y Markdown
-│   ├── pipeline.py                  # Orquestador del flujo formal completo
-│   └── main.py                      # Interfaz de línea de comandos (CLI)
-├── tests/                           # Suite completa de pruebas con pytest (99 tests)
-├── pyproject.toml                   # Configuración del proyecto y dependencias
-├── requirements.txt                 # Exportación estándar de dependencias
-└── README.md                        # Documentación general y guía de ejecución
+.
+├── data/                         — synthetic input data
+│   └── resumes/                  — six fictional plain-text resumes
+├── docs/                         — formal specifications, research, and guides
+│   ├── execution_guide.md        — installation, CLI, tests, troubleshooting
+│   ├── architecture_and_tests.md — module design and test scenarios
+│   ├── formal_automata.md        — profile automata specifications
+│   ├── formal_transducers.md     — extraction and FST specifications
+│   ├── dsl_specification.md      — textX grammar and validation rules
+│   ├── literature_review.md      — formal methods and resume screening
+│   └── research_poster.md        — pre-existing research poster draft
+├── src/                          — application source code
+│   ├── config/                   — profile taxonomy and skill alphabets
+│   ├── dsl/                      — textX grammar, parser, validator, serializer
+│   │   └── grammar/              — resume DSL grammar
+│   ├── extraction/               — contact and skill extraction
+│   ├── models/                   — profile and domain models
+│   ├── normalization/             — skill transducers and normalization pipeline
+│   ├── recognition/               — profile automata
+│   ├── visualization/             — HTML and Markdown renderers
+│   │   └── templates/            — HTML and CSS templates
+│   ├── main.py                   — command-line entry point
+│   └── pipeline.py               — processing and report orchestration
+├── tests/                        — unit, pipeline, and dataset integration tests
+├── pyproject.toml                — package metadata and dependencies
+├── requirements.txt              — pip dependency list
+└── README.md                     — project overview and quick start
 ```
+
+The CLI is implemented in `src/main.py`; this checkout does not contain `src/cli.py`.
+
+## Requirements and installation
+
+The project declares Python **3.10 or newer**. Runtime dependencies are `pyformlang>=1.0.10`, `textx>=3.1.0`, and `jinja2>=3.1.0`; the `dev` extra adds `pytest>=7.4.0`. No `LICENSE` file is present, so this README does not claim a software license.
+
+From the repository root, create and activate a virtual environment, then install the project and test dependency:
+
+**Windows PowerShell**
+
+```powershell
+py -3.10 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+```
+
+**macOS or Linux**
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+```
+
+Platform setup note: these are standard venv and pip steps. In this Windows session, a fresh venv was created with the bundled Python 3.12.14, but the `py` launcher points to a runtime that this session cannot access, and the editable install could not fetch `setuptools>=61.0` because DNS/network access to PyPI was unavailable. The CLI and tests were therefore checked using the repository’s existing Python 3.13 environment, not the fresh venv. macOS and Linux setup were not run here.
+
+## Quick start
+
+Run commands from the repository root with the virtual environment active. This example was run on `data/resumes/fullstack_valid.txt`:
+
+```bash
+python -m src.main data/resumes/fullstack_valid.txt --format summary
+```
+
+Observed output excerpt:
+
+```text
+CANDIDATE: Lina Marquez
+TITLE:     Full Stack Engineer
+EMAIL:     lina.marquez@example.com
+RAW SKILLS EXTRACTED (9):
+NORMALIZED CANONICAL SKILLS (5):
+  POSTGRESQL, REACT, GIT, JAVASCRIPT, NODE_JS
+PROFILE EVALUATIONS (FINITE AUTOMATA):
+  Full Stack Developer           [ACCEPTED]
+  Machine Learning Engineer      [REJECTED]
+  Backend Developer              [ACCEPTED]
+  Data Engineer                  [REJECTED]
+```
+
+This observed output shows that a resume can be accepted by more than its intended profile. See the dataset table below; the automata results reflect the current code.
+
+## Command-line options
+
+The actual entry point is `python -m src.main`. Its supported formats are `summary` (default), `dsl`, `html`, `markdown`, and `all`. It also supports `--demo`, `--output`/`-o`, and `--format`/`-f`.
+
+```bash
+# Print the summary (the default format)
+python -m src.main data/resumes/backend_sample.txt --format summary
+
+# Print the serialized DSL
+python -m src.main data/resumes/fullstack_valid.txt --format dsl
+
+# Write an HTML report or Markdown summary
+python -m src.main data/resumes/fullstack_valid.txt --format html --output output/fullstack.html
+python -m src.main data/resumes/fullstack_valid.txt --format markdown --output output/fullstack.md
+
+# Print the summary and write HTML, Markdown, and DSL files
+python -m src.main data/resumes/backend_sample.txt --format all --output output/backend
+
+# Process every .txt file in the bundled dataset
+python -m src.main --demo
+```
+
+The HTML and Markdown renderers create parent directories for their output files. In `all` mode, the `--output` value is a filename prefix: `output/backend` produces `backend_report.html`, `backend_summary.md`, and `backend.dsl` in that directory. Without `--output`, those files are written beside the input resume. In `dsl` mode, `--output` is the exact DSL filename; its parent directory must already exist. In `summary` mode, `--output` writes DSL text rather than a second summary report.
+
+## Tests
+
+Run the complete test suite with:
+
+```bash
+python -m pytest -q
+```
+
+On this checkout, `pytest --collect-only -q` collected **94 tests**, and the full suite passed **94 tests**. To run tests by area:
+
+```bash
+python -m pytest -q tests/test_extraction.py
+python -m pytest -q tests/test_normalization.py
+python -m pytest -q tests/test_recognition.py tests/test_taxonomy.py
+python -m pytest -q tests/test_dsl.py tests/test_pipeline.py tests/test_e2e_resumes.py
+python -m pytest -q tests/test_visualization_html.py tests/test_visualization_md.py
+python -m pytest -q tests/test_environment.py
+```
+
+## Formal and research documents
+
+| Document | Contents |
+|:---|:---|
+| [Formal transducers](docs/formal_transducers.md) | Regex extraction and FST normalization specifications. |
+| [Formal automata](docs/formal_automata.md) | State sets, transitions, and profile recognition results. |
+| [DSL specification](docs/dsl_specification.md) | textX grammar, EBNF transcription, and semantic validation. |
+| [Literature review](docs/literature_review.md) | Resume screening approaches and formal-method context. |
+| [Execution guide](docs/execution_guide.md) | Installation, CLI modes, tests, and troubleshooting. |
+| [Architecture and tests](docs/architecture_and_tests.md) | Module design and test scenarios. |
+
+## Synthetic dataset
+
+All six `.txt` files in `data/resumes/` are fictional. The demo produced the following accepted profiles on this checkout:
+
+| Resume file | Accepted profile(s) observed |
+|:---|:---|
+| `fullstack_valid.txt` | Full Stack Developer; Backend Developer |
+| `fullstack_invalid.txt` | Backend Developer |
+| `backend_sample.txt` | Backend Developer |
+| `ml_engineer_valid.txt` | Machine Learning Engineer; Backend Developer |
+| `ml_engineer_invalid.txt` | Backend Developer; Data Engineer |
+| `data_engineer_sample.txt` | Data Engineer |
+
+These are the CLI’s observed results, not exclusive target labels. The end-to-end tests check each case’s intended target acceptance or rejection, but do not require every non-target profile to be rejected.
+
+## Academic use
+
+ResumeLens was developed as a project for Discrete Structures III (CyED III), course 09772, at Universidad Icesi. Its dataset is synthetic, and its rules are educational examples. Do not use its classifications as employment decisions or as evidence of a candidate’s real qualifications.

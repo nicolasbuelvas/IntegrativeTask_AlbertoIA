@@ -76,7 +76,7 @@ graph TD
 
 ## 3. Test Suite Design and Scenario Matrix
 
-The test suite contains 99 automated test cases executed via `pytest`.
+The current test suite contains 94 collected tests, as reported by `pytest --collect-only -q` on this checkout. Test counts can change as tests are added or removed.
 
 ### 3.1 Unit and Component Testing
 
@@ -103,3 +103,5 @@ A synthetic dataset in `data/resumes/` exercises real-world document variations:
 | `ml_engineer_invalid.txt` | Dario Pineda | Machine Learning Engineer | **REJECTED** | Missing machine learning / deep learning framework layer. |
 | `backend_sample.txt` | Sara Beltran | Backend Developer | **ACCEPTED** | Has Python, PostgreSQL, Git meeting server-side requirements. |
 | `data_engineer_sample.txt` | Rafaela Quintero | Data Engineer | **ACCEPTED** | Has Python, Apache Spark, SQL satisfying distributed data requirements. |
+
+These expectations cover the intended target profile for each resume; they do not assert that all other profiles reject it. On the current checkout, the CLI also accepts some resumes under non-target profiles: `fullstack_valid.txt` is accepted as Backend Developer, `ml_engineer_valid.txt` as Backend Developer, and `ml_engineer_invalid.txt` as Backend Developer and Data Engineer. This overlap is an observed classifier behavior, not evidence of exclusive profile classification.
