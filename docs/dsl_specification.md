@@ -8,7 +8,7 @@ Integrative Project: ResumeLens
 
 ## 1. Purpose and Role in Stage 4
 
-The ResumeLens DSL is a readable, structured representation of a candidate profile. In Stage 4 it provides the text parsed into a textX model, checked by semantic validators, and serialized back to DSL. The available `src.main.run_pipeline` implements that parse–validate–serialize sequence. Automatic conversion from arbitrary plain-text resumes into DSL is [TODO: verificar].
+The ResumeLens DSL is a readable, structured representation of a candidate profile. In Stage 4 it provides the text parsed into a textX model, checked by semantic validators, and serialized back to DSL. The pipeline orchestrator `src.pipeline.ResumeLensPipeline` implements that complete parse–validate–serialize sequence, allowing automatic conversion from arbitrary plain-text resumes into validated DSL specifications.
 
 The grammar is the source of the syntactic structure. `validate_resume_model` adds a small set of business checks after parsing; it does not perform a complete email, skill-taxonomy, or profile-name validation.
 

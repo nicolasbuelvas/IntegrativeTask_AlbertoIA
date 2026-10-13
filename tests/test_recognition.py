@@ -1,6 +1,35 @@
 import pytest
+from pyformlang.finite_automaton import Symbol
 from src.recognition.data_automata import DataAutomata
 from src.recognition.software_automata import SoftwareAutomata
+
+@pytest.mark.parametrize(
+    "sequence",
+    [
+        ["PYTHON", "PANDAS", "TENSORFLOW", "SQL", "GIT"],
+        ["PYTHON", "NUMPY", "SCIKIT_LEARN", "SQL", "GIT"],
+        ["PYTHON", "PANDAS", "PYTORCH", "POSTGRESQL", "GIT"],
+    ],
+)
+def test_ml_automata_accepts_valid_sequences(sequence):
+    automata = DataAutomata()
+    symbols = [Symbol(s) for s in sequence]
+    assert automata.ml_dfa.accepts(symbols) is True
+
+
+@pytest.mark.parametrize(
+    "sequence",
+    [
+        ["PYTHON", "PANDAS"],
+        ["PANDAS", "PYTHON", "TENSORFLOW", "SQL", "GIT"],
+        ["PYTHON", "TENSORFLOW", "PANDAS", "SQL", "GIT"],
+    ],
+)
+def test_ml_automata_rejects_invalid_sequences(sequence):
+    automata = DataAutomata()
+    symbols = [Symbol(s) for s in sequence]
+    assert automata.ml_dfa.accepts(symbols) is False
+
 
 def test_data_automata_canonical_order():
     automaton = DataAutomata()
