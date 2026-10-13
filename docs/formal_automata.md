@@ -1,8 +1,10 @@
 # Formal Specifications: Resume Profile Automata
 
 Universidad Icesi  
-Course: Discrete Structures III (CyED III)  
-Integrative Project: ResumeLens
+Course: Discrete Structures III (CyED III, Código 09772)  
+Integrative Project: ResumeLens  
+Equipo: Nicolás Santiago Buelvas González, Daniel Alexander Nastul Flórez, Albert Valencia Escobar  
+Profesor: Andrés Aristizábal (Grupo 3)
 
 ---
 
@@ -12,61 +14,58 @@ Each profile recognizer is documented as a five-tuple:
 
 $$M = (Q, \Sigma, \delta, q_0, F)$$
 
-Here, $Q$ is the finite state set, $\Sigma$ is the set of symbols exposed by the automaton, $q_0$ is the initial state, and $F$ is the set of accepting states. Each row in a transition table gives one defined mapping $\delta(q, a) = q'$. The implementation stores only defined transitions, so $\delta$ is partial: an absent transition rejects the input. No implicit sink state is added to the documented state sets. An input is accepted exactly when all its symbols follow defined transitions and the final state belongs to $F$.
+Where:
+- $Q$: Finite set of named states tracking candidate progression across technology tiers.
+- $\Sigma$: Input alphabet of recognized canonical skills and role tokens.
+- $\delta$: Partial state transition function, $\delta: Q \times \Sigma \to Q$. An absent transition causes the automaton to reject the input string.
+- $q_0 \in Q$: Unique start state.
+- $F \subseteq Q$: Set of accepting final states.
 
-The state sets, alphabets, transition rows, initial and final states, determinism results, and traces below were extracted by instantiating the repository's four automata and executing them with pyformlang. The transition tables list every defined transition. `No epsilon transitions` means the extracted transition table contains no epsilon-labelled edge.
+All four automata implemented in ResumeLens are **Deterministic Finite Automata (DFA)**:
+1. Determinism: For every state $q \in Q$ and input symbol $a \in \Sigma$, there exists at most one next state, $|\delta(q, a)| \le 1$.
+2. Absence of $\varepsilon$-transitions: No transitions occur without consuming an input symbol.
+3. Order-Preserving Categorical Hierarchy: Candidate qualifications are normalized and canonically sorted prior to recognition.
 
 ---
 
-## 2. Full Stack Automaton
+## 2. Full Stack Developer Automaton
 
 $$M_{FS} = (Q_{FS}, \Sigma_{FS}, \delta_{FS}, q_{0,FS}, F_{FS})$$
 
-- $Q_{FS} = \{q0, q1, q2, q3, q4, q5\}$
-- $\Sigma_{FS} = \{ANGULAR, GIT, JAVASCRIPT, NODE\_JS, POSTGRESQL, PYTHON, REACT, TYPESCRIPT\}$
-- $q_{0,FS} = q0$
-- $F_{FS} = \{q5\}$
-- **Classification:** DFA. `is_deterministic()` returned `True`; there are no epsilon transitions.
+- **States ($Q_{FS}$)**:
+  $$Q_{FS} = \{ q0\_start, q1\_lang, q2\_fe, q3\_be, q4\_db, q5\_final \}$$
+  - $q0\_start$: Initial state.
+  - $q1\_lang$: Web role or foundational language verified (`JAVASCRIPT`, `TYPESCRIPT`, `FULLSTACK`, etc.).
+  - $q2\_fe$: Frontend library/framework verified (`REACT`, `ANGULAR`, `VUE`, `HTML`, `CSS`, etc.).
+  - $q3\_be$: Backend technology verified (`NODE_JS`, `DJANGO`, `SPRING_BOOT`, `FASTAPI`, `PYTHON`, etc.).
+  - $q4\_db$: Database verified (`POSTGRESQL`, `MYSQL`, `MONGODB`, `REDIS`, `SQL`, etc.).
+  - $q5\_final$: Version control and tooling verified (`GIT`, `DOCKER`, `REST_APIS`, etc.).
+- **Start State**: $q_{0,FS} = q0\_start$
+- **Accepting States**: $F_{FS} = \{ q5\_final \}$
+- **Classification**: DFA (Deterministic Finite Automaton).
 
-### Transition Function
+### Transition Function Highlights
 
-| Source State | Input Symbol | Target State |
-|:---|:---:|:---|
-| q0 | JAVASCRIPT | q1 |
-| q0 | TYPESCRIPT | q1 |
-| q1 | ANGULAR | q2 |
-| q1 | REACT | q2 |
-| q2 | NODE_JS | q3 |
-| q2 | PYTHON | q3 |
-| q3 | POSTGRESQL | q4 |
-| q4 | GIT | q5 |
-
-### Accepted Language
-
-The automaton accepts exactly five-symbol sequences of the form
-$(JAVASCRIPT \mid TYPESCRIPT)(ANGULAR \mid REACT)(NODE\_JS \mid PYTHON)POSTGRESQL\,GIT$.
-Other symbols or ordering leave a transition undefined and are rejected.
+| Source State | Category Group | Target State |
+|:---|:---|:---:|
+| `q0_start` / `q1_lang` | Roles / Web Languages (`JAVASCRIPT`, `TYPESCRIPT`, `FULLSTACK`) | `q1_lang` |
+| `q1_lang` / `q2_fe` | Frontend UI Frameworks (`REACT`, `ANGULAR`, `VUE`, `HTML`, `CSS`) | `q2_fe` |
+| `q2_fe` / `q3_be` | Backend Runtimes & Frameworks (`NODE_JS`, `DJANGO`, `SPRING_BOOT`, `PYTHON`) | `q3_be` |
+| `q3_be` / `q4_db` | Relational / NoSQL Databases (`POSTGRESQL`, `MYSQL`, `MONGODB`, `SQL`) | `q4_db` |
+| `q4_db` / `q5_final` | Tools & Version Control (`GIT`, `DOCKER`, `REST`, `GRAPHQL`) | `q5_final` |
 
 ### State Diagram
 
 ```mermaid
 stateDiagram-v2
-    [*] --> q0
-    q0 --> q1: JAVASCRIPT, TYPESCRIPT
-    q1 --> q2: ANGULAR, REACT
-    q2 --> q3: NODE_JS, PYTHON
-    q3 --> q4: POSTGRESQL
-    q4 --> q5: GIT
-    q5 --> [*]
+    [*] --> q0_start
+    q0_start --> q1_lang : JAVASCRIPT / TYPESCRIPT / FULLSTACK
+    q1_lang --> q2_fe : REACT / ANGULAR / VUE
+    q2_fe --> q3_be : NODE_JS / PYTHON / DJANGO / SPRING_BOOT
+    q3_be --> q4_db : POSTGRESQL / MYSQL / MONGODB / SQL
+    q4_db --> q5_final : GIT / DOCKER / REST
+    q5_final --> [*]
 ```
-
-### Executed Traces
-
-| Input sequence | State trace | Result |
-|:---|:---|:---:|
-| JAVASCRIPT, ANGULAR, NODE_JS, POSTGRESQL, GIT | q0 → q1 → q2 → q3 → q4 → q5 | Accepted |
-| JAVASCRIPT, ANGULAR, PYTHON, POSTGRESQL, GIT | q0 → q1 → q2 → q3 → q4 → q5 | Accepted |
-| ANGULAR | q0 → undefined transition | Rejected |
 
 ---
 
@@ -74,106 +73,75 @@ stateDiagram-v2
 
 $$M_{ML} = (Q_{ML}, \Sigma_{ML}, \delta_{ML}, q_{0,ML}, F_{ML})$$
 
-- $Q_{ML} = \{q0, q1, q2, q3, q4, q5\}$
-- $\Sigma_{ML} = \{GIT, NUMPY, PANDAS, PYTHON, SCIKIT\_LEARN, SQL, TENSORFLOW\}$
-- $q_{0,ML} = q0$
-- $F_{ML} = \{q5\}$
-- **Classification:** DFA. `is_deterministic()` returned `True`; there are no epsilon transitions.
+- **States ($Q_{ML}$)**:
+  $$Q_{ML} = \{ q0\_start, q1\_lang, q2\_prep, q3\_framework, q4\_db, q5\_final \}$$
+  - $q0\_start$: Initial state.
+  - $q1\_lang$: ML role or core language (`PYTHON`, `R`, `JULIA`, `MACHINE_LEARNING`, etc.).
+  - $q2\_prep$: Tabular data processing package (`PANDAS`, `NUMPY`).
+  - $q3\_framework$: ML / Deep Learning framework (`SCIKIT_LEARN`, `TENSORFLOW`, `PYTORCH`, `KERAS`).
+  - $q4\_db$: Storage engine (`SQL`, `POSTGRESQL`, `MYSQL`, `MONGODB`).
+  - $q5\_final$: Model tracking and DevOps tool (`GIT`, `DOCKER`, `AWS`, `GCP`).
+- **Start State**: $q_{0,ML} = q0\_start$
+- **Accepting States**: $F_{ML} = \{ q5\_final \}$
+- **Classification**: DFA.
 
-### Transition Function
+### Transition Function Highlights
 
-| Source State | Input Symbol | Target State |
-|:---|:---:|:---|
-| q0 | PYTHON | q1 |
-| q1 | NUMPY | q2 |
-| q1 | PANDAS | q2 |
-| q2 | SCIKIT_LEARN | q3 |
-| q2 | TENSORFLOW | q3 |
-| q3 | SQL | q4 |
-| q4 | GIT | q5 |
-
-### Accepted Language
-
-The automaton accepts exactly five-symbol sequences of the form
-$PYTHON(PANDAS \mid NUMPY)(SCIKIT\_LEARN \mid TENSORFLOW)SQL\,GIT$.
-In particular, `PYTORCH` is not in this automaton's alphabet.
+| Source State | Category Group | Target State |
+|:---|:---|:---:|
+| `q0_start` / `q1_lang` | Core Language (`PYTHON`, `R`, `JULIA`) | `q1_lang` |
+| `q1_lang` / `q2_prep` | Data Preparation (`PANDAS`, `NUMPY`) | `q2_prep` |
+| `q2_prep` / `q3_framework` | ML Frameworks (`SCIKIT_LEARN`, `TENSORFLOW`, `PYTORCH`) | `q3_framework` |
+| `q3_framework` / `q4_db` | Databases (`SQL`, `POSTGRESQL`, `MYSQL`) | `q4_db` |
+| `q4_db` / `q5_final` | Tools & VCS (`GIT`, `DOCKER`) | `q5_final` |
 
 ### State Diagram
 
 ```mermaid
 stateDiagram-v2
-    [*] --> q0
-    q0 --> q1: PYTHON
-    q1 --> q2: PANDAS, NUMPY
-    q2 --> q3: SCIKIT_LEARN, TENSORFLOW
-    q3 --> q4: SQL
-    q4 --> q5: GIT
-    q5 --> [*]
+    [*] --> q0_start
+    q0_start --> q1_lang : PYTHON / ML_ROLE
+    q1_lang --> q2_prep : PANDAS / NUMPY
+    q2_prep --> q3_framework : SCIKIT_LEARN / TENSORFLOW / PYTORCH
+    q3_framework --> q4_db : SQL / POSTGRESQL
+    q4_db --> q5_final : GIT / DOCKER
+    q5_final --> [*]
 ```
-
-### Executed Traces
-
-| Input sequence | State trace | Result |
-|:---|:---|:---:|
-| PYTHON, NUMPY, SCIKIT_LEARN, SQL, GIT | q0 → q1 → q2 → q3 → q4 → q5 | Accepted |
-| PYTHON, NUMPY, TENSORFLOW, SQL, GIT | q0 → q1 → q2 → q3 → q4 → q5 | Accepted |
-| GIT | q0 → undefined transition | Rejected |
 
 ---
 
-## 4. Backend Automaton
+## 4. Backend Developer Automaton
 
 $$M_{BE} = (Q_{BE}, \Sigma_{BE}, \delta_{BE}, q_{0,BE}, F_{BE})$$
 
-- $Q_{BE} = \{s0, s1\}$
-- $\Sigma_{BE} = \{API, BACKEND, GIT, JAVA, POSTGRESQL, PYTHON, REST, SPRING\}$
-- $q_{0,BE} = s0$
-- $F_{BE} = \{s1\}$
-- **Classification:** DFA. `is_deterministic()` returned `True`; there are no epsilon transitions.
+- **States ($Q_{BE}$)**:
+  $$Q_{BE} = \{ q0\_start, q1\_be\_tech, q2\_db, q3\_tools \}$$
+  - $q0\_start$: Initial state.
+  - $q1\_be\_tech$: Backend role, language, or service framework (`PYTHON`, `JAVA`, `GO`, `SPRING_BOOT`, `DJANGO`, `FASTAPI`, `NODE_JS`).
+  - $q2\_db$: Persistence system (`POSTGRESQL`, `MYSQL`, `MONGODB`, `REDIS`, `SQL`).
+  - $q3\_tools$: Tooling and infrastructure (`GIT`, `DOCKER`, `REST`, `GRAPHQL`, `AWS`).
+- **Start State**: $q_{0,BE} = q0\_start$
+- **Accepting States**: $F_{BE} = \{ q3\_tools \}$
+- **Classification**: DFA.
 
-### Transition Function
+### Transition Function Highlights
 
-| Source State | Input Symbol | Target State |
-|:---|:---:|:---|
-| s0 | API | s1 |
-| s0 | BACKEND | s1 |
-| s0 | GIT | s1 |
-| s0 | JAVA | s1 |
-| s0 | POSTGRESQL | s1 |
-| s0 | PYTHON | s1 |
-| s0 | REST | s1 |
-| s0 | SPRING | s1 |
-| s1 | API | s1 |
-| s1 | BACKEND | s1 |
-| s1 | GIT | s1 |
-| s1 | JAVA | s1 |
-| s1 | POSTGRESQL | s1 |
-| s1 | PYTHON | s1 |
-| s1 | REST | s1 |
-| s1 | SPRING | s1 |
-
-### Accepted Language
-
-The automaton accepts every non-empty sequence over $\Sigma_{BE}$, or
-$\Sigma_{BE}^{+}$. It rejects the empty sequence and any sequence containing a symbol outside $\Sigma_{BE}$.
+| Source State | Category Group | Target State |
+|:---|:---|:---:|
+| `q0_start` / `q1_be_tech` | Backend Languages & Frameworks (`PYTHON`, `JAVA`, `DJANGO`, `SPRING`, `NODE_JS`) | `q1_be_tech` |
+| `q1_be_tech` / `q2_db` | Database Engines (`POSTGRESQL`, `MYSQL`, `REDIS`, `SQL`) | `q2_db` |
+| `q2_db` / `q3_tools` | Tools & Version Control (`GIT`, `DOCKER`, `REST`, `API`) | `q3_tools` |
 
 ### State Diagram
 
 ```mermaid
 stateDiagram-v2
-    [*] --> s0
-    s0 --> s1: API, BACKEND, GIT, JAVA, POSTGRESQL, PYTHON, REST, SPRING
-    s1 --> s1: API, BACKEND, GIT, JAVA, POSTGRESQL, PYTHON, REST, SPRING
-    s1 --> [*]
+    [*] --> q0_start
+    q0_start --> q1_be_tech : PYTHON / JAVA / DJANGO / SPRING / NODE_JS
+    q1_be_tech --> q2_db : POSTGRESQL / MYSQL / REDIS / SQL
+    q2_db --> q3_tools : GIT / DOCKER / REST
+    q3_tools --> [*]
 ```
-
-### Executed Traces
-
-| Input sequence | State trace | Result |
-|:---|:---|:---:|
-| API | s0 → s1 | Accepted |
-| BACKEND | s0 → s1 | Accepted |
-| Empty sequence ($\varepsilon$) | s0 | Rejected |
 
 ---
 
@@ -181,65 +149,57 @@ stateDiagram-v2
 
 $$M_{DE} = (Q_{DE}, \Sigma_{DE}, \delta_{DE}, q_{0,DE}, F_{DE})$$
 
-- $Q_{DE} = \{s0, s1\}$
-- $\Sigma_{DE} = \{DATA, ETL, PANDAS, POWERBI, PYTHON, SPARK, SQL\}$
-- $q_{0,DE} = s0$
-- $F_{DE} = \{s1\}$
-- **Classification:** DFA. `is_deterministic()` returned `True`; there are no epsilon transitions.
+- **States ($Q_{DE}$)**:
+  $$Q_{DE} = \{ q0\_start, q1\_role, q2\_core, q3\_proc, q4\_final \}$$
+  - $q0\_start$: Initial state.
+  - $q1\_role$: Data role identifier (`DATA`, `DATA_ENGINEER`, `DATA_PLATFORM_ENGINEER`).
+  - $q2\_core$: Core pipeline programming / query language (`PYTHON`, `SQL`, `SCALA`, `JAVA`).
+  - $q3\_proc$: Distributed processing engine / orchestrator (`SPARK`, `HADOOP`, `AIRFLOW`, `FLINK`, `ETL`).
+  - $q4\_final$: Analytical warehouse and tools (`SQL`, `POSTGRESQL`, `SNOWFLAKE`, `BIGQUERY`, `GIT`, `DOCKER`).
+- **Start State**: $q_{0,DE} = q0\_start$
+- **Accepting States**: $F_{DE} = \{ q3\_proc, q4\_final \}$
+- **Classification**: DFA.
 
-### Transition Function
+### Transition Function Highlights
 
-| Source State | Input Symbol | Target State |
-|:---|:---:|:---|
-| s0 | DATA | s1 |
-| s0 | ETL | s1 |
-| s0 | PANDAS | s1 |
-| s0 | POWERBI | s1 |
-| s0 | PYTHON | s1 |
-| s0 | SPARK | s1 |
-| s0 | SQL | s1 |
-| s1 | DATA | s1 |
-| s1 | ETL | s1 |
-| s1 | PANDAS | s1 |
-| s1 | POWERBI | s1 |
-| s1 | PYTHON | s1 |
-| s1 | SPARK | s1 |
-| s1 | SQL | s1 |
-
-### Accepted Language
-
-The automaton accepts every non-empty sequence over $\Sigma_{DE}$, or
-$\Sigma_{DE}^{+}$. It rejects the empty sequence and any sequence containing a symbol outside $\Sigma_{DE}$.
+| Source State | Category Group | Target State |
+|:---|:---|:---:|
+| `q0_start` / `q1_role` | Roles (`DATA`, `DATA_ENGINEER`, `DATA_PLATFORM_ENGINEER`) | `q1_role` |
+| `q0_start` / `q1_role` / `q2_core` | Core Languages (`PYTHON`, `SQL`, `SCALA`) | `q2_core` |
+| `q0_start` / `q1_role` / `q2_core` / `q3_proc` | Processing Engines (`SPARK`, `HADOOP`, `AIRFLOW`, `ETL`) | `q3_proc` |
+| `q3_proc` / `q4_final` | Warehouse & Tools (`SNOWFLAKE`, `BIGQUERY`, `POSTGRESQL`, `GIT`) | `q4_final` |
 
 ### State Diagram
 
 ```mermaid
 stateDiagram-v2
-    [*] --> s0
-    s0 --> s1: DATA, ETL, PANDAS, POWERBI, PYTHON, SPARK, SQL
-    s1 --> s1: DATA, ETL, PANDAS, POWERBI, PYTHON, SPARK, SQL
-    s1 --> [*]
+    [*] --> q0_start
+    q0_start --> q1_role : DATA / DATA_ENGINEER
+    q1_role --> q2_core : PYTHON / SQL / SCALA
+    q2_core --> q3_proc : SPARK / AIRFLOW / HADOOP / ETL
+    q3_proc --> q4_final : SNOWFLAKE / BIGQUERY / POSTGRESQL / GIT
+    q3_proc --> [*]
+    q4_final --> [*]
 ```
-
-### Executed Traces
-
-| Input sequence | State trace | Result |
-|:---|:---|:---:|
-| DATA | s0 → s1 | Accepted |
-| ETL | s0 → s1 | Accepted |
-| Empty sequence ($\varepsilon$) | s0 | Rejected |
 
 ---
 
-## 6. Summary
+## 6. Mathematical Summary Table
 
-| Profile | $|Q|$ | $|\Sigma|$ | $|\delta|$ | Type |
-|:---|---:|---:|---:|:---:|
-| Full Stack | 6 | 8 | 8 | DFA |
-| ML Engineer | 6 | 7 | 7 | DFA |
-| Backend | 2 | 8 | 16 | DFA |
-| Data Engineer | 2 | 7 | 14 | DFA |
+| Profile | $|Q|$ | Start State | Final States ($F$) | Type |
+|:---|:---:|:---:|:---:|:---:|
+| **Full Stack Developer** | 6 | `q0_start` | `{"q5_final"}` | DFA |
+| **Machine Learning Engineer** | 6 | `q0_start` | `{"q5_final"}` | DFA |
+| **Backend Developer** | 4 | `q0_start` | `{"q3_tools"}` | DFA |
+| **Data Engineer** | 5 | `q0_start` | `{"q3_proc", "q4_final"}` | DFA |
 
-## 7. Use in Classification
+---
 
-`src/recognition/classifier.py` was not present when this specification was generated, so its call path cannot be verified: [TODO: verificar]. The available constructors expose `fullstack_dfa` and `backend_dfa` through `SoftwareAutomata`, and `ml_dfa` and `data_dfa` through `DataAutomata`. The classes also provide `accepts_backend_token()` and `accepts_token()` for Backend and Data Engineer respectively; Full Stack and ML Engineer expose their DFA objects directly.
+## 7. Pipeline Integration and Verification
+
+The automata are integrated directly into the screening pipeline through `src.pipeline.ResumeLensPipeline`:
+- Candidate skills are extracted from raw plain-text curricula via `SkillExtractor` (Stage 1).
+- Surface aliases are normalized into canonical alphabet tokens via `TransducerBuilder` (Stage 2).
+- Normalized tokens are sorted hierarchically by profile category via `NormalizationPipeline.sort_for_profile()`.
+- The sequence is converted to pyformlang `Symbol` instances and evaluated deterministically against `SoftwareAutomata` (`fullstack_dfa`, `backend_dfa`) and `DataAutomata` (`ml_dfa`, `data_dfa`).
+- Verified acceptance vectors populate the candidate profile DSL model for syntax/semantic validation and report generation.

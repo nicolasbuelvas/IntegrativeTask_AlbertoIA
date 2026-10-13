@@ -147,7 +147,7 @@ IntegrativeTask_AlbertoIA/
 │   ├── visualization/               # Renderers HTML (Jinja2) y Markdown
 │   ├── pipeline.py                  # Orquestador del flujo formal completo
 │   └── main.py                      # Interfaz de línea de comandos (CLI)
-├── tests/                           # Suite completa de pruebas con pytest (99 tests)
+├── tests/                           # Suite completa de pruebas con pytest (100 tests)
 ├── pyproject.toml                   # Configuración del proyecto y dependencias
 ├── requirements.txt                 # Exportación estándar de dependencias
 └── README.md                        # Documentación general y guía de ejecución
