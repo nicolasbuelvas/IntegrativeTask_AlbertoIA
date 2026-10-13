@@ -131,8 +131,12 @@ IntegrativeTask_AlbertoIA/
 ├── data/
 │   └── resumes/                     # Dataset sintético de hojas de vida (.txt)
 ├── docs/
-│   ├── formal_transducers.md        # Especificaciones formales 7-tuplas de FST
-│   └── formal_automata.md           # Especificaciones formales 5-tuplas de DFA
+│   ├── literature_review.md         # Revisión bibliográfica sobre modelos formales
+│   ├── formal_transducers.md        # Especificaciones formales 7-tuplas y diagramas de FST
+│   ├── formal_automata.md           # Especificaciones formales 5-tuplas y diagramas de DFA
+│   ├── dsl_specification.md         # Especificación EBNF de la gramática DSL (textX)
+│   ├── architecture_and_tests.md    # Diseño modular de software y matriz de pruebas
+│   └── research_poster.md           # Contenido estructurado del póster de investigación (en inglés)
 ├── src/
 │   ├── config/                      # Taxonomía canónica y alfabetos de perfiles
 │   ├── dsl/                         # Gramática textX (resume.tx), parser y serializador

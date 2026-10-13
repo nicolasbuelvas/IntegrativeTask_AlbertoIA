@@ -83,6 +83,25 @@ The transducer $M_{SE} = (Q_{SE}, \Sigma_{SE}, \Gamma_{SE}, \delta_{SE}, \omega_
 | $q_{React,6}$ | 'j' | $q_{React,7}$ | $\varepsilon$ |
 | $q_{React,7}$ | 's' | $q_{React,8} \in F$ | `REACT` |
 
+#### Graphical Representation (FST Subgraph Example - $M_{SE}$):
+```mermaid
+stateDiagram-v2
+    [*] --> q0
+    q0 --> q_JS1 : 'J' / ε
+    q_JS1 --> q_JS2 : 'S' / JAVASCRIPT
+    q_JS2 --> [*]
+
+    q0 --> q_R1 : 'R' / ε
+    q_R1 --> q_R2 : 'e' / ε
+    q_R2 --> q_R3 : 'a' / ε
+    q_R3 --> q_R4 : 'c' / ε
+    q_R4 --> q_R5 : 't' / ε
+    q_R5 --> q_R6 : '.' / ε
+    q_R6 --> q_R7 : 'j' / ε
+    q_R7 --> q_R8 : 's' / REACT
+    q_R8 --> [*]
+```
+
 ---
 
 ### 2.3 Transducer for AI & Data Science Qualifications ($M_{AI}$)
@@ -109,6 +128,29 @@ The transducer $M_{AI} = (Q_{AI}, \Sigma_{AI}, \Gamma_{AI}, \delta_{AI}, \omega_
 | $q_{PT,4}$ | 'r' | $q_{PT,5}$ | $\varepsilon$ |
 | $q_{PT,5}$ | 'c' | $q_{PT,6}$ | $\varepsilon$ |
 | $q_{PT,6}$ | 'h' | $q_{PT,7} \in F$ | `PYTORCH` |
+
+#### Graphical Representation (FST Subgraph Example - $M_{AI}$):
+```mermaid
+stateDiagram-v2
+    [*] --> q0
+    q0 --> q_sk1 : 's' / ε
+    q_sk1 --> q_sk2 : 'k' / ε
+    q_sk2 --> q_sk3 : 'l' / ε
+    q_sk3 --> q_sk4 : 'e' / ε
+    q_sk4 --> q_sk5 : 'a' / ε
+    q_sk5 --> q_sk6 : 'r' / ε
+    q_sk6 --> q_sk7 : 'n' / SCIKIT_LEARN
+    q_sk7 --> [*]
+
+    q0 --> q_PT1 : 'P' / ε
+    q_PT1 --> q_PT2 : 'y' / ε
+    q_PT2 --> q_PT3 : 'T' / ε
+    q_PT3 --> q_PT4 : 'o' / ε
+    q_PT4 --> q_PT5 : 'r' / ε
+    q_PT5 --> q_PT6 : 'c' / ε
+    q_PT6 --> q_PT7 : 'h' / PYTORCH
+    q_PT7 --> [*]
+```
 
 ---
 

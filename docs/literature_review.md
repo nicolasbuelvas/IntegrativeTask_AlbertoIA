@@ -1,5 +1,13 @@
 # Formal Methods for Resume Analysis: A Short Literature Review
 
+Universidad Icesi  
+Curso: Estructuras Discretas III (CyED III, Código 09772)  
+Proyecto Integrador: ResumeLens  
+Equipo: Nicolás Santiago Buelvas González, Daniel Alexander Nastul Flórez, Albert Valencia Escobar  
+Profesor: Andrés Aristizábal (Grupo 3)
+
+---
+
 ## 1. The problem
 
 A resume contains information that can help determine whether a candidate may fit a job. However, resumes use different layouts and wording. The same skill may appear with different spellings, and useful details may be placed in different sections. A screening program must first find and organize information, then compare it with the profiles or requirements it knows.
